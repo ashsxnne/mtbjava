@@ -1,0 +1,18 @@
+movie info
+moivie title
+genre
+runtime
+schedule(date&time)
+cinema/screen 
+
+booking details
+seat sleected
+number of tickets
+ticket price
+downpayment required
+
+
+system info
+booking number
+date booked
+instruction proceed to cahsier
