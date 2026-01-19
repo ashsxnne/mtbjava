@@ -160,7 +160,7 @@ public class Login extends BaseFrame {
         );
 
         jPanel1.add(Left);
-        Left.setBounds(400, 0, 400, 550);
+        Left.setBounds(400, 0, 383, 550);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
