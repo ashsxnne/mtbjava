@@ -1,6 +1,7 @@
 
 package Main;
 
+import javax.swing.JOptionPane;
 
 public class SignUp extends BaseFrame {
 
@@ -111,6 +112,11 @@ public class SignUp extends BaseFrame {
         jButton1.setBackground(new java.awt.Color(34, 61, 114));
         jButton1.setForeground(new java.awt.Color(255, 255, 255));
         jButton1.setText("Sign Up");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         jButton2.setForeground(new java.awt.Color(255, 51, 51));
         jButton2.setText("Login");
@@ -196,6 +202,8 @@ public class SignUp extends BaseFrame {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
+        
+        
         Login LoginFrame = new Login();
         LoginFrame.setVisible(true);
         LoginFrame.pack();
@@ -203,9 +211,26 @@ public class SignUp extends BaseFrame {
         this.dispose();
     }//GEN-LAST:event_jButton2ActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        LoginAndSignUp service = new LoginAndSignUp();
+
+    boolean success = service.signUp(
+        jTextField1.getText(),
+        jTextField2.getText(),
+        new String(jPasswordField1.getPassword())
+    );
+
+    if (success) {
+        JOptionPane.showMessageDialog(this, "Account Recorded!");
+        new Login().setVisible(true);
+        this.dispose();
+    } else {
+        JOptionPane.showMessageDialog(this, "Signup failed");
+    }
+    
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

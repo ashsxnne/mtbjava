@@ -1,7 +1,7 @@
 
 package Main;
 
-
+import javax.swing.JOptionPane;
 public class Login extends BaseFrame {
 
   
@@ -182,6 +182,7 @@ public class Login extends BaseFrame {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         
+        
         SignUp SignUpFrame = new SignUp();
         SignUpFrame.setVisible(true);
         SignUpFrame.pack();
@@ -189,9 +190,33 @@ public class Login extends BaseFrame {
         this.dispose();
     }//GEN-LAST:event_jButton2ActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {
+
+    LoginAndSignUp service = new LoginAndSignUp();
+
+    boolean success = service.login(
+        jTextField1.getText(),                       // Email
+        new String(jPasswordField1.getPassword())    // Password
+    );
+
+    if (success) {
+        JOptionPane.showMessageDialog(this, "Login Successful!");
+
+        landingpage home = new landingpage();   // or your main frame
+        home.setVisible(true);
+        home.pack();
+        home.setLocationRelativeTo(null);
+        this.dispose();
+    } else {
+        JOptionPane.showMessageDialog(this, "Invalid Email or Password");
+    }
+}
+
+    //Login LoginFrame = new Login();
+        //LoginFrame.setVisible(true);
+        //LoginFrame.pack();
+        //LoginFrame.setLocationRelativeTo(null); 
+        //this.dispose();
     
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
