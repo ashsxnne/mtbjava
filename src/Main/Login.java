@@ -1,15 +1,19 @@
-
 package Main;
 
 import javax.swing.JOptionPane;
+
 public class Login extends BaseFrame {
 
-  
     public Login() {
         initComponents();
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
     }
 
- 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -181,43 +185,36 @@ public class Login extends BaseFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        
-        
+
         SignUp SignUpFrame = new SignUp();
         SignUpFrame.setVisible(true);
         SignUpFrame.pack();
-        SignUpFrame.setLocationRelativeTo(null); 
+        SignUpFrame.setLocationRelativeTo(null);
         this.dispose();
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {
 
-    LoginAndSignUp service = new LoginAndSignUp();
+        LoginAndSignUp service = new LoginAndSignUp();
 
-    boolean success = service.login(
-        jTextField1.getText(),                       // Email
-        new String(jPasswordField1.getPassword())    // Password
-    );
+        boolean success = service.login(
+                jTextField1.getText(), // Email
+                new String(jPasswordField1.getPassword()) // Password
+        );
 
-    if (success) {
-        JOptionPane.showMessageDialog(this, "Login Successful!");
+        if (success) {
+            JOptionPane.showMessageDialog(this, "Login Successful!");
 
-        landingpage home = new landingpage();   // or your main frame
-        home.setVisible(true);
-        home.pack();
-        home.setLocationRelativeTo(null);
-        this.dispose();
-    } else {
-        JOptionPane.showMessageDialog(this, "Invalid Email or Password");
+            landingpage landingpage = new landingpage();   // or your main frame
+            landingpage.setVisible(true);
+            landingpage.pack();
+            landingpage.setLocationRelativeTo(null);
+            this.dispose();
+        } else {
+            JOptionPane.showMessageDialog(this, "Invalid Email or Password");
+        }
     }
-}
 
-    //Login LoginFrame = new Login();
-        //LoginFrame.setVisible(true);
-        //LoginFrame.pack();
-        //LoginFrame.setLocationRelativeTo(null); 
-        //this.dispose();
-    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel Left;
