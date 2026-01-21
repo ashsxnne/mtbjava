@@ -205,10 +205,10 @@ public class Login extends BaseFrame {
         if (success) {
             JOptionPane.showMessageDialog(this, "Login Successful!");
 
-            landingpage landingpage = new landingpage();   // or your main frame
-            landingpage.setVisible(true);
-            landingpage.pack();
-            landingpage.setLocationRelativeTo(null);
+            Home Home = new Home();   // or your main frame
+            Home.setVisible(true);
+            Home.pack();
+            Home.setLocationRelativeTo(null);
             this.dispose();
         } else {
             JOptionPane.showMessageDialog(this, "Invalid Email or Password");
