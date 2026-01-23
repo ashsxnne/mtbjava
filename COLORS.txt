@@ -1,0 +1,21 @@
+Hex: #223D72
+RGB: rgb(34, 61, 114) MAIN COLOR DARK SHADE BLUE
+
+
+Deep Navy HSV: (219, 70, 44, 1.0) 
+HEX: #132240 → Main background, header bars
+
+Royal Blue HSV: (215, 65, 45, 1.0) 
+HEX: #284773 → Primary buttons, active states
+
+Soft Gold HSV: (45, 60, 85, 1.0) 
+HEX: #D9B857 → Highlights, selected seats, premium accents
+
+Light Gray HSV: (0, 0, 92, 1.0) 
+HEX: #EBEBEB → Background panels, text areas
+
+
+
+Black Overlay (60% transparency) 
+HSV: (0°, 0%, 0%, 0.6) HEX (with alpha): 
+#00000099 CSS alternative: rgba(0, 0, 0, 0.6) → Modals, popups, focus overlays
