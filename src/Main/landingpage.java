@@ -93,7 +93,8 @@ public class landingpage extends BaseFrame {
 
         jPanel1.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 960, 100));
 
-        jPanel3.setBackground(new java.awt.Color(33, 59, 112));
+        jPanel3.setBackground(new java.awt.Color(33, 60, 112));
+        jPanel3.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
         jPanel3.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jLabel1.setBackground(new java.awt.Color(216, 184, 86));
