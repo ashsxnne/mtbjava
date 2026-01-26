@@ -37,7 +37,7 @@ public class Home extends BaseFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(255, 255, 255));
-        getContentPane().setLayout(null);
+        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jPanel2.setBackground(new java.awt.Color(34, 61, 114));
         jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -86,8 +86,7 @@ public class Home extends BaseFrame {
         });
         jPanel2.add(jButton7, new org.netbeans.lib.awtextra.AbsoluteConstraints(370, 30, 110, 40));
 
-        getContentPane().add(jPanel2);
-        jPanel2.setBounds(0, 0, 960, 99);
+        getContentPane().add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 960, 99));
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -157,8 +156,7 @@ public class Home extends BaseFrame {
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
-        getContentPane().add(jPanel1);
-        jPanel1.setBounds(0, 100, 960, 500);
+        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 100, 960, -1));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
