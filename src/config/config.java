@@ -1,6 +1,7 @@
 package config;
 
 import java.sql.*;
+import net.proteanit.sql.DbUtils;
 
 public class config {
     //Connection Method to SQLITE
@@ -50,27 +51,56 @@ public class config {
             System.out.println("Error adding record: " + e.getMessage());
         }
     }
-    
-    public boolean loginUser(String email, String password) {
 
-    String sql = "SELECT 1 FROM user_table WHERE u_email = ? AND u_pass = ?";
+    public boolean authenticate(String sql, Object... values) {
+        try (Connection conn = connectDB();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-    try (Connection conn = connectDB();
-         PreparedStatement pst = conn.prepareStatement(sql)) {
+            for (int i = 0; i < values.length; i++) {
+                pstmt.setObject(i + 1, values[i]);
+            }
 
-        pst.setString(1, email);
-        pst.setString(2, password);
-
-        ResultSet rs = pst.executeQuery();
-        return rs.next();
-
-    } catch (Exception e) {
-        System.out.println("Login error: " + e.getMessage());
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return true;
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Login Error: " + e.getMessage());
+        }
         return false;
+    }
+    
+    public void displayData(String sql, javax.swing.JTable table) {
+    try (Connection conn = connectDB();
+         PreparedStatement pstmt = conn.prepareStatement(sql);
+         ResultSet rs = pstmt.executeQuery()) {
+        
+        // This line automatically maps the Resultset to your JTable
+        table.setModel(DbUtils.resultSetToTableModel(rs));
+        
+    } catch (SQLException e) {
+        System.out.println("Error displaying data: " + e.getMessage());
     }
 }
 
+    public boolean loginUser(String email, String password) {
+
+        String sql = "SELECT 1 FROM user_table WHERE u_email = ? AND u_pass = ?";
+
+        try (Connection conn = connectDB();
+                PreparedStatement pst = conn.prepareStatement(sql)) {
+
+            pst.setString(1, email);
+            pst.setString(2, password);
+
+            ResultSet rs = pst.executeQuery();
+            return rs.next();
+
+        } catch (Exception e) {
+            System.out.println("Login error: " + e.getMessage());
+            return false;
+        }
+    }
+
 }
-
-
-
