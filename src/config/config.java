@@ -70,23 +70,22 @@ public class config {
         }
         return false;
     }
-    
+
     public void displayData(String sql, javax.swing.JTable table) {
-    try (Connection conn = connectDB();
-         PreparedStatement pstmt = conn.prepareStatement(sql);
-         ResultSet rs = pstmt.executeQuery()) {
-        
-        // This line automatically maps the Resultset to your JTable
-        table.setModel(DbUtils.resultSetToTableModel(rs));
-        
-    } catch (SQLException e) {
-        System.out.println("Error displaying data: " + e.getMessage());
+        try (Connection conn = connectDB();
+                PreparedStatement pstmt = conn.prepareStatement(sql);
+                ResultSet rs = pstmt.executeQuery()) {
+
+            // This line automatically maps the Resultset to your JTable
+            table.setModel(DbUtils.resultSetToTableModel(rs));
+
+        } catch (SQLException e) {
+            System.out.println("Error displaying data: " + e.getMessage());
+        }
     }
-}
 
-    public boolean loginUser(String email, String password) {
-
-        String sql = "SELECT 1 FROM user_table WHERE u_email = ? AND u_pass = ?";
+    public LoginResult loginUserDetailed(String email, String password) {
+        String sql = "SELECT u_type, u_status FROM user_table WHERE u_email = ? AND u_pass = ?";
 
         try (Connection conn = connectDB();
                 PreparedStatement pst = conn.prepareStatement(sql)) {
@@ -94,12 +93,30 @@ public class config {
             pst.setString(1, email);
             pst.setString(2, password);
 
-            ResultSet rs = pst.executeQuery();
-            return rs.next();
+            try (ResultSet rs = pst.executeQuery()) {
+                if (rs.next()) {
+                    String userType = rs.getString("u_type");
+                    int status = rs.getInt("u_status");
+                    return new LoginResult(userType, status);
+                } else {
+                    return null; // no user found
+                }
+            }
 
-        } catch (Exception e) {
+        } catch (SQLException e) {
             System.out.println("Login error: " + e.getMessage());
-            return false;
+            return null;
+        }
+    }
+
+    public static class LoginResult {
+
+        public String userType;
+        public int status;
+
+        public LoginResult(String userType, int status) {
+            this.userType = userType;
+            this.status = status;
         }
     }
 

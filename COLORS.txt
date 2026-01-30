@@ -1,21 +1,32 @@
-Hex: #223D72
-RGB: rgb(34, 61, 114) MAIN COLOR DARK SHADE BLUE
+Light Lavender
+HEX: #CFC9EB
+HSV: 251°, 14%, 92%
+
+Muted Lavender
+HEX: #A5A0C1
+HSV: 249°, 17%, 76%
 
 
-Deep Navy HSV: (219, 70, 44, 1.0) 
-HEX: #132240 → Main background, header bars
+Dusty Purple
+HEX: #938EAB
+HSV: 250°, 17%, 67
 
-Royal Blue HSV: (215, 65, 45, 1.0) 
-HEX: #284773 → Primary buttons, active states
+Deep Muted Purple
+HEX: #6F6A87 (slightly darker edge of the gradient)
+HSV: 247°, 21%, 53%
 
-Soft Gold HSV: (45, 60, 85, 1.0) 
-HEX: #D9B857 → Highlights, selected seats, premium accents
+Pure White
+HEX: #FFFFFF
+HSV: 0°, 0%, 100%
 
-Light Gray HSV: (0, 0, 92, 1.0) 
-HEX: #EBEBEB → Background panels, text areas
+Light Gray
+HEX: #D5D5D5
+HSV: 0°, 0%, 84%
 
+Medium Gray
+HEX: #C0C0C0
+HSV: 0°, 0%, 75%
 
-
-Black Overlay (60% transparency) 
-HSV: (0°, 0%, 0%, 0.6) HEX (with alpha): 
-#00000099 CSS alternative: rgba(0, 0, 0, 0.6) → Modals, popups, focus overlays
+Dark Gray
+HEX: #9E9E9E
+HSV: 0°, 0%, 62%

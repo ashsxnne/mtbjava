@@ -1,0 +1,66 @@
+HOME
+
+Home Home = new Home();   // or your main frame
+            Home.setVisible(true);
+            Home.pack();
+            Home.setLocationRelativeTo(null);
+            this.dispose();
+
+
+MOVIES
+
+Movies Movies = new Movies();   
+            Movies.setVisible(true);
+            Movies.pack();
+            Movies.setLocationRelativeTo(null);
+            this.dispose();
+
+
+TICKET BOOK
+
+            Ticketsbook Ticketsbook = new Ticketsbook();   
+            Ticketsbook.setVisible(true);
+            Ticketsbook.pack();
+            Ticketsbook.setLocationRelativeTo(null);
+            this.dispose();
+
+
+PROFILE
+
+Profile Profile = new Profile();   
+            Profile.setVisible(true);
+            Profile.pack();
+            Profile.setLocationRelativeTo(null);
+            this.dispose();
+
+
+need to login/signup first(landing page buttons)
+
+String message = "To book tickets, please sign in or create an account.";
+        String title = "Authentication Required";
+
+        String[] options = {"Login", "Sign Up", "Cancel"};
+
+        int choice = javax.swing.JOptionPane.showOptionDialog(
+                this,
+                message,
+                title,
+                javax.swing.JOptionPane.YES_NO_CANCEL_OPTION,
+                javax.swing.JOptionPane.INFORMATION_MESSAGE,
+                null,
+                options,
+                options[0]
+        );
+
+        if (choice == 0) { // Login
+            Login loginFrame = new Login();
+            loginFrame.setVisible(true);
+            this.dispose();
+
+        } else if (choice == 1) { // Sign Up
+            SignUp signUpFrame = new SignUp();
+            signUpFrame.setVisible(true);
+            this.dispose();
+        }
+        // Cancel = do nothing
+

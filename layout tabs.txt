@@ -1,0 +1,35 @@
+------------------------------------------------
+ LOGO (MTB)     Home   Movies   Sign In
+------------------------------------------------
+
+ NOW SHOWING
+ [Poster]  [Poster]  [Poster]  [Poster]
+  Title     Title     Title     Title
+ [Buy Ticket] [Buy Ticket] [Buy Ticket] [Buy Ticket]
+
+------------------------------------------------
+ Footer: © 2026 MTB | Privacy | Terms | Contact
+------------------------------------------------
+
+
+-----------------------------------------------
+ Sidebar          |  USER DASHBOARD
+-----------------------------------------------
+ Dashboard        |  Welcome, User!
+ My Tickets       |
+ Browse Movies    |  [Active Tickets: 2]
+ Profile          |  [Upcoming Movies: 3]
+ Logout           |
+-----------------------------------------------
+
+
+-----------------------------------------------
+ Sidebar          |  ADMIN DASHBOARD
+-----------------------------------------------
+ Dashboard        |  [Movies: 12]
+ Movies           |  [Users: 45]
+ Schedules        |  [Tickets Sold: 320]
+ Users            |
+ Reports          |
+ Logout           |
+-----------------------------------------------

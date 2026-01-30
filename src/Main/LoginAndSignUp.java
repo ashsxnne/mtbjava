@@ -10,17 +10,6 @@ public class LoginAndSignUp {
         conf = new config();
     }
 
-    // ================= LOGIN =================
-    public boolean login(String email, String password) {
-
-        if (email == null || password == null ||
-            email.isEmpty() || password.isEmpty()) {
-            return false;
-        }
-
-        return conf.loginUser(email, password);
-    }
-
     // ================= SIGN UP =================
     public boolean signUp(String fullName, String email, String password) {
 
@@ -28,8 +17,9 @@ public class LoginAndSignUp {
             return false;
         }
 
-       String sql = "INSERT INTO user_table (u_name, u_email, u_pass) VALUES (?, ?, ?)";
-         
+        String sql = "INSERT INTO user_table (u_name, u_email, u_pass, u_type, u_status) " +
+                     "VALUES (?, ?, ?, 'customer', 0)";
+
         try {
             conf.addRecord(sql, fullName, email, password);
             return true;
@@ -38,5 +28,4 @@ public class LoginAndSignUp {
             return false;
         }
     }
-
 }

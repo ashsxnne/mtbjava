@@ -1,9 +1,7 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package Main;
+
+import design.BaseFrame;
 
 public class landingpage extends BaseFrame {
 
@@ -16,27 +14,26 @@ public class landingpage extends BaseFrame {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        jPanel2 = new javax.swing.JPanel();
-        seachbutton = new javax.swing.JTextField();
-        login = new javax.swing.JButton();
-        signup = new javax.swing.JButton();
-        seachbutton1 = new javax.swing.JTextField();
-        jLabel5 = new javax.swing.JLabel();
-        jPanel3 = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
-        contactus = new javax.swing.JLabel();
-        privacy = new javax.swing.JLabel();
-        termofservice = new javax.swing.JLabel();
         movie1 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         viewbutton = new javax.swing.JButton();
         movie2 = new javax.swing.JLabel();
         movie3 = new javax.swing.JLabel();
         movie4 = new javax.swing.JLabel();
-        jToggleButton1 = new javax.swing.JToggleButton();
-        jToggleButton2 = new javax.swing.JToggleButton();
-        jToggleButton3 = new javax.swing.JToggleButton();
-        jToggleButton4 = new javax.swing.JToggleButton();
+        jPanel2 = new javax.swing.JPanel();
+        jLabel5 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        jLabel12 = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
+        jLabel9 = new javax.swing.JLabel();
+        jLabel10 = new javax.swing.JLabel();
+        jPanel6 = new javax.swing.JPanel();
+        contactus2 = new javax.swing.JLabel();
+        privacy2 = new javax.swing.JLabel();
+        termofservice2 = new javax.swing.JLabel();
+        jLabel11 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -44,91 +41,12 @@ public class landingpage extends BaseFrame {
         jPanel1.setPreferredSize(new java.awt.Dimension(961, 578));
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jPanel2.setBackground(new java.awt.Color(34, 61, 114));
-        jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
-        seachbutton.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        seachbutton.setText("Select genre");
-        seachbutton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                seachbuttonActionPerformed(evt);
-            }
-        });
-        jPanel2.add(seachbutton, new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 30, 120, 40));
-
-        login.setBackground(new java.awt.Color(34, 61, 114));
-        login.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        login.setForeground(new java.awt.Color(255, 255, 255));
-        login.setText("Login");
-        login.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                loginActionPerformed(evt);
-            }
-        });
-        jPanel2.add(login, new org.netbeans.lib.awtextra.AbsoluteConstraints(670, 30, 110, 50));
-
-        signup.setBackground(new java.awt.Color(34, 61, 114));
-        signup.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        signup.setForeground(new java.awt.Color(255, 255, 255));
-        signup.setText("Sign Up");
-        signup.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                signupActionPerformed(evt);
-            }
-        });
-        jPanel2.add(signup, new org.netbeans.lib.awtextra.AbsoluteConstraints(820, 30, 110, 50));
-
-        seachbutton1.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        seachbutton1.setText("Search movies");
-        seachbutton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                seachbutton1ActionPerformed(evt);
-            }
-        });
-        jPanel2.add(seachbutton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 30, 160, 40));
-
-        jLabel5.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagesicons/3.jpg"))); // NOI18N
-        jPanel2.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 10, 120, -1));
-
-        jPanel1.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 960, 100));
-
-        jPanel3.setBackground(new java.awt.Color(33, 60, 112));
-        jPanel3.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
-        jPanel3.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
-        jLabel1.setBackground(new java.awt.Color(216, 184, 86));
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jLabel1.setForeground(new java.awt.Color(216, 184, 86));
-        jLabel1.setText("© 2026 MTB. All rights reserved.");
-        jPanel3.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 20, 230, 20));
-
-        contactus.setBackground(new java.awt.Color(34, 61, 114));
-        contactus.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        contactus.setForeground(new java.awt.Color(216, 184, 86));
-        contactus.setText("Contact Us");
-        jPanel3.add(contactus, new org.netbeans.lib.awtextra.AbsoluteConstraints(820, 20, 100, 20));
-
-        privacy.setBackground(new java.awt.Color(55, 131, 245));
-        privacy.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        privacy.setForeground(new java.awt.Color(216, 184, 86));
-        privacy.setText("Privacy Policy");
-        jPanel3.add(privacy, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 20, 110, 20));
-
-        termofservice.setBackground(new java.awt.Color(34, 61, 114));
-        termofservice.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        termofservice.setForeground(new java.awt.Color(216, 184, 86));
-        termofservice.setText("Terms of Service");
-        jPanel3.add(termofservice, new org.netbeans.lib.awtextra.AbsoluteConstraints(670, 20, 140, 20));
-
-        jPanel1.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 520, 960, 60));
-
         movie1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/movies/1.jpg"))); // NOI18N
         jPanel1.add(movie1, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 180, 210, 270));
 
         jLabel6.setBackground(new java.awt.Color(216, 184, 86));
         jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
-        jLabel6.setForeground(new java.awt.Color(216, 184, 86));
+        jLabel6.setForeground(new java.awt.Color(207, 201, 234));
         jLabel6.setText("Now Showing");
         jPanel1.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 110, 260, 50));
 
@@ -144,7 +62,7 @@ public class landingpage extends BaseFrame {
 
         movie2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/movies/2.png"))); // NOI18N
         movie2.setText("jLabel2");
-        jPanel1.add(movie2, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 180, 220, 270));
+        jPanel1.add(movie2, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 180, 210, 270));
 
         movie3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/movies/3.jpg"))); // NOI18N
         movie3.setText("jLabel2");
@@ -154,55 +72,108 @@ public class landingpage extends BaseFrame {
         movie4.setText("jLabel2");
         jPanel1.add(movie4, new org.netbeans.lib.awtextra.AbsoluteConstraints(730, 180, 210, 270));
 
-        jToggleButton1.setBackground(new java.awt.Color(255, 255, 255));
-        jToggleButton1.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        jToggleButton1.setForeground(new java.awt.Color(34, 47, 73));
-        jToggleButton1.setText("Buy Tickets");
-        jToggleButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jToggleButton1ActionPerformed(evt);
-            }
-        });
-        jPanel1.add(jToggleButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 460, 140, 40));
+        jPanel2.setBackground(new java.awt.Color(207, 201, 234));
+        jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jToggleButton2.setBackground(new java.awt.Color(255, 255, 255));
-        jToggleButton2.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        jToggleButton2.setForeground(new java.awt.Color(34, 47, 73));
-        jToggleButton2.setText("Buy Tickets");
-        jToggleButton2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jToggleButton2ActionPerformed(evt);
-            }
-        });
-        jPanel1.add(jToggleButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(770, 460, 140, 40));
+        jLabel5.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagesicons/mtblogo3.png"))); // NOI18N
+        jPanel2.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 10, 120, -1));
 
-        jToggleButton3.setBackground(new java.awt.Color(255, 255, 255));
-        jToggleButton3.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        jToggleButton3.setForeground(new java.awt.Color(34, 47, 73));
-        jToggleButton3.setText("Buy Tickets");
-        jToggleButton3.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jToggleButton3ActionPerformed(evt);
+        jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        jLabel3.setText("Home");
+        jLabel3.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel3MouseClicked(evt);
             }
         });
-        jPanel1.add(jToggleButton3, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 460, 140, 40));
+        jPanel2.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 30, -1, -1));
 
-        jToggleButton4.setBackground(new java.awt.Color(255, 255, 255));
-        jToggleButton4.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        jToggleButton4.setForeground(new java.awt.Color(34, 47, 73));
-        jToggleButton4.setText("Buy Tickets");
-        jToggleButton4.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jToggleButton4ActionPerformed(evt);
+        jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        jLabel4.setText("Movies");
+        jLabel4.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel4MouseClicked(evt);
             }
         });
-        jPanel1.add(jToggleButton4, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 460, 140, 40));
+        jPanel2.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(700, 30, -1, -1));
+
+        jLabel12.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        jLabel12.setText("Sign in");
+        jLabel12.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel12MouseClicked(evt);
+            }
+        });
+        jPanel2.add(jLabel12, new org.netbeans.lib.awtextra.AbsoluteConstraints(810, 30, -1, -1));
+
+        jPanel1.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 960, 99));
+
+        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        jLabel1.setText("Buy Tickets");
+        jLabel1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel1MouseClicked(evt);
+            }
+        });
+        jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 470, -1, -1));
+
+        jLabel8.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        jLabel8.setText("Buy Tickets");
+        jLabel8.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel8MouseClicked(evt);
+            }
+        });
+        jPanel1.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(560, 470, -1, -1));
+
+        jLabel9.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        jLabel9.setText("Buy Tickets");
+        jLabel9.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel9MouseClicked(evt);
+            }
+        });
+        jPanel1.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(770, 470, -1, -1));
+
+        jLabel10.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        jLabel10.setText("Buy Tickets");
+        jLabel10.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel10MouseClicked(evt);
+            }
+        });
+        jPanel1.add(jLabel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 470, -1, -1));
+
+        jPanel6.setBackground(new java.awt.Color(207, 201, 234));
+        jPanel6.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        contactus2.setBackground(new java.awt.Color(34, 61, 114));
+        contactus2.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        contactus2.setText("Contact Us");
+        jPanel6.add(contactus2, new org.netbeans.lib.awtextra.AbsoluteConstraints(820, 10, 100, 20));
+
+        privacy2.setBackground(new java.awt.Color(55, 131, 245));
+        privacy2.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        privacy2.setText("Privacy Policy");
+        jPanel6.add(privacy2, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 10, 110, 20));
+
+        termofservice2.setBackground(new java.awt.Color(34, 61, 114));
+        termofservice2.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        termofservice2.setText("Terms of Service");
+        jPanel6.add(termofservice2, new org.netbeans.lib.awtextra.AbsoluteConstraints(670, 10, 140, 20));
+
+        jLabel11.setBackground(new java.awt.Color(0, 0, 0));
+        jLabel11.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        jLabel11.setText("© 2026 MTB. All rights reserved.");
+        jPanel6.add(jLabel11, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 10, 230, 20));
+
+        jPanel1.add(jPanel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 540, 960, 40));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 960, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -211,24 +182,6 @@ public class landingpage extends BaseFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void loginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginActionPerformed
-
-        Login loginFrame = new Login();
-        loginFrame.setVisible(true);
-        this.dispose(); // close landing page
-    }//GEN-LAST:event_loginActionPerformed
-
-    private void signupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_signupActionPerformed
-        SignUp signUpFrame = new SignUp();
-        signUpFrame.setVisible(true);
-        this.dispose(); // 
-    }//GEN-LAST:event_signupActionPerformed
-
-    private void seachbutton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_seachbutton1ActionPerformed
-
-// TODO add your handling code here:
-    }//GEN-LAST:event_seachbutton1ActionPerformed
 
     private void viewbuttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_viewbuttonActionPerformed
         String message = "To view all movies, please sign in or create an account.";
@@ -260,154 +213,144 @@ public class landingpage extends BaseFrame {
         // Cancel = do nothing
     }//GEN-LAST:event_viewbuttonActionPerformed
 
-    private void seachbuttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_seachbuttonActionPerformed
+    private void jLabel3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel3MouseClicked
 
+        String message = "To view all movies, please sign in or create an account.";
+        String title = "Authentication Required";
+
+        String[] options = {"Login", "Sign Up", "Cancel"};
+
+        int choice = javax.swing.JOptionPane.showOptionDialog(
+                this,
+                message,
+                title,
+                javax.swing.JOptionPane.YES_NO_CANCEL_OPTION,
+                javax.swing.JOptionPane.INFORMATION_MESSAGE,
+                null,
+                options,
+                options[0]
+        );
+
+        if (choice == 0) { // Login
+            Login loginFrame = new Login();
+            loginFrame.setVisible(true);
+            this.dispose();
+
+        } else if (choice == 1) { // Sign Up
+            SignUp signUpFrame = new SignUp();
+            signUpFrame.setVisible(true);
+            this.dispose();
+        }
+        // Cancel = do nothing
+    }//GEN-LAST:event_jLabel3MouseClicked
+
+    private void jLabel4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel4MouseClicked
+
+        String message = "To view all movies, please sign in or create an account.";
+        String title = "Authentication Required";
+
+        String[] options = {"Login", "Sign Up", "Cancel"};
+
+        int choice = javax.swing.JOptionPane.showOptionDialog(
+                this,
+                message,
+                title,
+                javax.swing.JOptionPane.YES_NO_CANCEL_OPTION,
+                javax.swing.JOptionPane.INFORMATION_MESSAGE,
+                null,
+                options,
+                options[0]
+        );
+
+        if (choice == 0) { // Login
+            Login loginFrame = new Login();
+            loginFrame.setVisible(true);
+            this.dispose();
+
+        } else if (choice == 1) { // Sign Up
+            SignUp signUpFrame = new SignUp();
+            signUpFrame.setVisible(true);
+            this.dispose();
+        }
+        // Cancel = do nothing
+    }//GEN-LAST:event_jLabel4MouseClicked
+
+    private void jLabel1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel1MouseClicked
+
+        String message = "To book tickets, please sign in or create an account.";
+        String title = "Authentication Required";
+
+        String[] options = {"Login", "Sign Up", "Cancel"};
+
+        int choice = javax.swing.JOptionPane.showOptionDialog(
+                this,
+                message,
+                title,
+                javax.swing.JOptionPane.YES_NO_CANCEL_OPTION,
+                javax.swing.JOptionPane.INFORMATION_MESSAGE,
+                null,
+                options,
+                options[0]
+        );
+
+        if (choice == 0) { // Login
+            Login loginFrame = new Login();
+            loginFrame.setVisible(true);
+            this.dispose();
+
+        } else if (choice == 1) { // Sign Up
+            SignUp signUpFrame = new SignUp();
+            signUpFrame.setVisible(true);
+            this.dispose();
+        }
+        // Cancel = do nothing
+
+    }//GEN-LAST:event_jLabel1MouseClicked
+
+    private void jLabel8MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel8MouseClicked
         // TODO add your handling code here:
-    }//GEN-LAST:event_seachbuttonActionPerformed
+    }//GEN-LAST:event_jLabel8MouseClicked
 
-    private void jToggleButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButton3ActionPerformed
-        String message = "To book tickets, please sign in or create an account.";
-        String title = "Authentication Required";
+    private void jLabel9MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel9MouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jLabel9MouseClicked
 
-        String[] options = {"Login", "Sign Up", "Cancel"};
+    private void jLabel10MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel10MouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jLabel10MouseClicked
 
-        int choice = javax.swing.JOptionPane.showOptionDialog(
-                this,
-                message,
-                title,
-                javax.swing.JOptionPane.YES_NO_CANCEL_OPTION,
-                javax.swing.JOptionPane.INFORMATION_MESSAGE,
-                null,
-                options,
-                options[0]
-        );
+    private void jLabel12MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel12MouseClicked
 
-        if (choice == 0) { // Login
-            Login loginFrame = new Login();
-            loginFrame.setVisible(true);
-            this.dispose();
+        Login LoginFrame = new Login();
+        LoginFrame.setVisible(true);
+        LoginFrame.pack();
+        LoginFrame.setLocationRelativeTo(null);
+        this.dispose();
 
-        } else if (choice == 1) { // Sign Up
-            SignUp signUpFrame = new SignUp();
-            signUpFrame.setVisible(true);
-            this.dispose();
-        }
-        // Cancel = do nothing
-    }//GEN-LAST:event_jToggleButton3ActionPerformed
-
-    private void jToggleButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButton1ActionPerformed
-        String message = "To book tickets, please sign in or create an account.";
-        String title = "Authentication Required";
-
-        String[] options = {"Login", "Sign Up", "Cancel"};
-
-        int choice = javax.swing.JOptionPane.showOptionDialog(
-                this,
-                message,
-                title,
-                javax.swing.JOptionPane.YES_NO_CANCEL_OPTION,
-                javax.swing.JOptionPane.INFORMATION_MESSAGE,
-                null,
-                options,
-                options[0]
-        );
-
-        if (choice == 0) { // Login
-            Login loginFrame = new Login();
-            loginFrame.setVisible(true);
-            this.dispose();
-
-        } else if (choice == 1) { // Sign Up
-            SignUp signUpFrame = new SignUp();
-            signUpFrame.setVisible(true);
-            this.dispose();
-        }
-        // Cancel = do nothing
-    }//GEN-LAST:event_jToggleButton1ActionPerformed
-
-    private void jToggleButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButton4ActionPerformed
-        String message = "To book tickets, please sign in or create an account.";
-        String title = "Authentication Required";
-
-        String[] options = {"Login", "Sign Up", "Cancel"};
-
-        int choice = javax.swing.JOptionPane.showOptionDialog(
-                this,
-                message,
-                title,
-                javax.swing.JOptionPane.YES_NO_CANCEL_OPTION,
-                javax.swing.JOptionPane.INFORMATION_MESSAGE,
-                null,
-                options,
-                options[0]
-        );
-
-        if (choice == 0) { // Login
-            Login loginFrame = new Login();
-            loginFrame.setVisible(true);
-            this.dispose();
-
-        } else if (choice == 1) { // Sign Up
-            SignUp signUpFrame = new SignUp();
-            signUpFrame.setVisible(true);
-            this.dispose();
-        }
-        // Cancel = do nothing
-    }//GEN-LAST:event_jToggleButton4ActionPerformed
-
-    private void jToggleButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButton2ActionPerformed
-        String message = "To book tickets, please sign in or create an account.";
-        String title = "Authentication Required";
-
-        String[] options = {"Login", "Sign Up", "Cancel"};
-
-        int choice = javax.swing.JOptionPane.showOptionDialog(
-                this,
-                message,
-                title,
-                javax.swing.JOptionPane.YES_NO_CANCEL_OPTION,
-                javax.swing.JOptionPane.INFORMATION_MESSAGE,
-                null,
-                options,
-                options[0]
-        );
-
-        if (choice == 0) { // Login
-            Login loginFrame = new Login();
-            loginFrame.setVisible(true);
-            this.dispose();
-
-        } else if (choice == 1) { // Sign Up
-            SignUp signUpFrame = new SignUp();
-            signUpFrame.setVisible(true);
-            this.dispose();
-        }
-        // Cancel = do nothing
-    }//GEN-LAST:event_jToggleButton2ActionPerformed
+    }//GEN-LAST:event_jLabel12MouseClicked
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel contactus;
+    private javax.swing.JLabel contactus2;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
-    private javax.swing.JToggleButton jToggleButton1;
-    private javax.swing.JToggleButton jToggleButton2;
-    private javax.swing.JToggleButton jToggleButton3;
-    private javax.swing.JToggleButton jToggleButton4;
-    private javax.swing.JButton login;
+    private javax.swing.JPanel jPanel6;
     private javax.swing.JLabel movie1;
     private javax.swing.JLabel movie2;
     private javax.swing.JLabel movie3;
     private javax.swing.JLabel movie4;
-    private javax.swing.JLabel privacy;
-    private javax.swing.JTextField seachbutton;
-    private javax.swing.JTextField seachbutton1;
-    private javax.swing.JButton signup;
-    private javax.swing.JLabel termofservice;
+    private javax.swing.JLabel privacy2;
+    private javax.swing.JLabel termofservice2;
     private javax.swing.JButton viewbutton;
     // End of variables declaration//GEN-END:variables
 }
