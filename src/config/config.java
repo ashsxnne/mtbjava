@@ -85,7 +85,7 @@ public class config {
     }
 
     public LoginResult loginUserDetailed(String email, String password) {
-        String sql = "SELECT u_type, u_status FROM tbl_user WHERE u_email = ? AND u_pass = ?";
+        String sql = "SELECT u_email, u_type, u_status FROM tbl_user WHERE u_email = ? AND u_pass = ?";
 
         try (Connection conn = connectDB();
                 PreparedStatement pst = conn.prepareStatement(sql)) {
@@ -95,26 +95,28 @@ public class config {
 
             try (ResultSet rs = pst.executeQuery()) {
                 if (rs.next()) {
+                    String dbEmail = rs.getString("u_email"); // ✅ renamed
                     String userType = rs.getString("u_type");
                     int status = rs.getInt("u_status");
-                    return new LoginResult(userType, status);
-                } else {
-                    return null; // no user found
+
+                    return new LoginResult(dbEmail, userType, status);
                 }
             }
 
         } catch (SQLException e) {
             System.out.println("Login error: " + e.getMessage());
-            return null;
         }
+        return null;
     }
 
     public static class LoginResult {
 
+        public String email;
         public String userType;
         public int status;
 
-        public LoginResult(String userType, int status) {
+        public LoginResult(String email, String userType, int status) {
+            this.email = email;
             this.userType = userType;
             this.status = status;
         }

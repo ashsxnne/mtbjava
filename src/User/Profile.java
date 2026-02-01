@@ -7,6 +7,12 @@ package User;
 
 import design.BaseFrame;
 import Main.landingpage;
+import config.Session;
+import config.config;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import javax.swing.JOptionPane;
 
 /**
@@ -20,6 +26,61 @@ public class Profile extends BaseFrame {
      */
     public Profile() {
         initComponents();
+        System.out.println("SESSION EMAIL = " + Session.userEmail);
+        showUserName();
+    }
+
+    private void showUserName() {
+        Connection conn = null;
+        PreparedStatement pst = null;
+        ResultSet rs = null;
+
+        try {
+            conn = config.connectDB(); // use your config class
+            if (conn == null) {
+                jLabel7.setText("User");
+                return;
+            }
+
+            // Replace with the currently logged-in user's email or ID
+            String userEmail = Session.userEmail;
+
+            String sql = "SELECT u_name FROM tbl_user WHERE u_email = ?";
+            pst = conn.prepareStatement(sql);
+            pst.setString(1, userEmail);
+
+            rs = pst.executeQuery();
+
+            if (rs.next()) {
+                String fullName = rs.getString("u_name");
+                jLabel7.setText(fullName);
+            } else {
+                jLabel7.setText("User");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            jLabel7.setText("Hello, User");
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+            } catch (Exception e) {
+            }
+            try {
+                if (pst != null) {
+                    pst.close();
+                }
+            } catch (Exception e) {
+            }
+            try {
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (Exception e) {
+            }
+        }
     }
 
     /**
@@ -160,6 +221,11 @@ public class Profile extends BaseFrame {
 
         jLabel7.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         jLabel7.setText("User name");
+        jLabel7.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel7MouseClicked(evt);
+            }
+        });
 
         jLabel14.setFont(new java.awt.Font("Segoe UI", 0, 36)); // NOI18N
         jLabel14.setText("Hello,");
@@ -298,7 +364,7 @@ public class Profile extends BaseFrame {
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 565, Short.MAX_VALUE)
+            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -309,7 +375,7 @@ public class Profile extends BaseFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 565, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
@@ -343,38 +409,42 @@ public class Profile extends BaseFrame {
     }//GEN-LAST:event_jLabel4MouseClicked
 
     private void jLabel11MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel11MouseClicked
-        
-        // Show confirmation dialog
-    int confirm = JOptionPane.showConfirmDialog(
-        this, 
-        "Are you sure you want to log out?", 
-        "Confirm Logout", 
-        JOptionPane.YES_NO_OPTION,
-        JOptionPane.QUESTION_MESSAGE
-    );
 
-    if (confirm == JOptionPane.YES_OPTION) {
-        // User confirmed logout
-        landingpage landingpage = new landingpage();   
-        landingpage.setVisible(true);
-        landingpage.pack();
-        landingpage.setLocationRelativeTo(null);
-        this.dispose();
-    }
+        // Show confirmation dialog
+        int confirm = JOptionPane.showConfirmDialog(
+                this,
+                "Are you sure you want to log out?",
+                "Confirm Logout",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE
+        );
+
+        if (confirm == JOptionPane.YES_OPTION) {
+            // User confirmed logout
+            landingpage landingpage = new landingpage();
+            landingpage.setVisible(true);
+            landingpage.pack();
+            landingpage.setLocationRelativeTo(null);
+            this.dispose();
+        }
 
     }//GEN-LAST:event_jLabel11MouseClicked
 
     private void jLabel8MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel8MouseClicked
-        
-        
-        Profile Profile = new Profile();   
-            Profile.setVisible(true);
-            Profile.pack();
-            Profile.setLocationRelativeTo(null);
-            this.dispose();
+
+        Profile Profile = new Profile();
+        Profile.setVisible(true);
+        Profile.pack();
+        Profile.setLocationRelativeTo(null);
+        this.dispose();
 
 
     }//GEN-LAST:event_jLabel8MouseClicked
+
+    private void jLabel7MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel7MouseClicked
+
+
+    }//GEN-LAST:event_jLabel7MouseClicked
 
     /**
      * @param args the command line arguments

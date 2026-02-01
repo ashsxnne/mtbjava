@@ -3,6 +3,8 @@ package Main;
 import design.BaseFrame;
 import Admin.AdminDashboard;
 import User.Home;
+import User.Profile;
+import config.Session;
 import config.config;
 import config.config.LoginResult;
 import java.sql.ResultSet;
@@ -222,8 +224,7 @@ public class Login extends BaseFrame {
     }//GEN-LAST:event_jLabel6MouseClicked
 
     private void jLabel9MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel9MouseClicked
-        
-        
+
         landingpage landingpage = new landingpage();
         landingpage.setVisible(true);
         landingpage.pack();
@@ -233,28 +234,25 @@ public class Login extends BaseFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {
 
-        config conf = new config();
-        LoginResult result = conf.loginUserDetailed(blank.getText(),
-                new String(jPasswordField1.getPassword()));
+        String email = blank.getText();
+        String password = new String(jPasswordField1.getPassword());
+
+        config conf = new config();  // create an instance of your config class
+        config.LoginResult result = conf.loginUserDetailed(email, password);
 
         if (result != null) {
-            if (result.status == 0) {
-                JOptionPane.showMessageDialog(this, "Account not active. Waiting for admin approval.");
-                return;
-            }
+            Session.userEmail = result.email; // ✅ save email in session
+            System.out.println("Logged in as: " + Session.userEmail);
 
-            if ("admin".equalsIgnoreCase(result.userType)) {
-                JOptionPane.showMessageDialog(this, "Welcome Admin!");
-                new AdminDashboard().setVisible(true);
-            } else {
-                JOptionPane.showMessageDialog(this, "Login Successful!");
-                new Home().setVisible(true);
-            }
+            // Open Profile
+            Home Home = new Home();
+            Home.setVisible(true);
+            Home.pack();
+            Home.setLocationRelativeTo(null);
             this.dispose();
         } else {
-            JOptionPane.showMessageDialog(this, "Invalid Email or Password");
+            JOptionPane.showMessageDialog(this, "Invalid login");
         }
-
     }
 
 
