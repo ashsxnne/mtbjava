@@ -5,11 +5,13 @@
  */
 package User;
 
+import design.BaseFrame;
+
 /**
  *
  * @author ph2tn
  */
-public class updatedetails extends javax.swing.JFrame {
+public class updatedetails extends BaseFrame {
 
     /**
      * Creates new form updatedetails

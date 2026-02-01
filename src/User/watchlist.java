@@ -5,11 +5,13 @@
  */
 package User;
 
+import design.BaseFrame;
+
 /**
  *
  * @author ph2tn
  */
-public class watchlist extends javax.swing.JFrame {
+public class watchlist extends BaseFrame {
 
     /**
      * Creates new form watchlist

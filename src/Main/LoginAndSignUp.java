@@ -17,7 +17,7 @@ public class LoginAndSignUp {
             return false;
         }
 
-        String sql = "INSERT INTO user_table (u_name, u_email, u_pass, u_type, u_status) " +
+        String sql = "INSERT INTO tbl_user (u_name, u_email, u_pass, u_type, u_status) " +
                      "VALUES (?, ?, ?, 'customer', 0)";
 
         try {

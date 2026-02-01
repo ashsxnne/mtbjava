@@ -85,7 +85,7 @@ public class config {
     }
 
     public LoginResult loginUserDetailed(String email, String password) {
-        String sql = "SELECT u_type, u_status FROM user_table WHERE u_email = ? AND u_pass = ?";
+        String sql = "SELECT u_type, u_status FROM tbl_user WHERE u_email = ? AND u_pass = ?";
 
         try (Connection conn = connectDB();
                 PreparedStatement pst = conn.prepareStatement(sql)) {

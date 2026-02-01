@@ -1,0 +1,101 @@
+package CRUD;
+
+import Admin.usermanagement;
+import javax.swing.*;
+import javax.swing.table.TableCellEditor;
+import java.awt.*;
+import CRUD.EditUserDialog;
+import java.sql.*;
+
+public class ActionButtonEditor extends AbstractCellEditor implements TableCellEditor {
+
+    private final JPanel panel = new JPanel();
+    private final JButton edit = new JButton("Edit");
+    private final JButton delete = new JButton("Delete");
+    private final JTable table;
+
+    public ActionButtonEditor(JTable table) {
+        this.table = table;
+        panel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 0));
+
+        edit.setBackground(new Color(52, 152, 219));
+        edit.setForeground(Color.WHITE);
+
+        delete.setBackground(new Color(231, 76, 60));
+        delete.setForeground(Color.WHITE);
+
+        edit.addActionListener(e -> editUser());
+        delete.addActionListener(e -> deleteUser());
+
+        panel.add(edit);
+        panel.add(delete);
+    }
+
+    private void editUser() {
+
+    int row = table.getSelectedRow();
+
+    int id = (int) table.getValueAt(row, 0);
+    String name = table.getValueAt(row, 1).toString();
+    String email = table.getValueAt(row, 2).toString();
+    String type = table.getValueAt(row, 4).toString();
+    int status = Integer.parseInt(table.getValueAt(row, 5).toString());
+
+    usermanagement parent =
+            (usermanagement) SwingUtilities.getWindowAncestor(table);
+
+    new EditUserDialog(parent, id, name, email, type, status)
+            .setVisible(true);
+
+    fireEditingStopped();
+}
+
+
+    private void deleteUser() {
+        int row = table.getSelectedRow();
+        int userId = (int) table.getValueAt(row, 0);
+
+        int confirm = JOptionPane.showConfirmDialog(
+                table,
+                "Delete this user?",
+                "Confirm",
+                JOptionPane.YES_NO_OPTION
+        );
+
+        if (confirm == JOptionPane.YES_OPTION) {
+            deleteFromDB(userId);
+            ((usermanagement) SwingUtilities
+                    .getWindowAncestor(table))
+                    .loadUsers();
+        }
+
+        fireEditingStopped();
+    }
+
+    private void deleteFromDB(int id) {
+        String sql = "DELETE FROM tbl_user WHERE u_id=?";
+
+        try (Connection con = DriverManager.getConnection("jdbc:sqlite:mtb.db");
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setInt(1, id);
+            ps.executeUpdate();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public Component getTableCellEditorComponent(
+            JTable table, Object value, boolean isSelected,
+            int row, int column) {
+
+        return panel;
+    }
+
+    @Override
+    public Object getCellEditorValue() {
+        return null;
+    }
+}

@@ -5,11 +5,13 @@
  */
 package User;
 
+import design.BaseFrame;
+
 /**
  *
  * @author ph2tn
  */
-public class transaction extends javax.swing.JFrame {
+public class transaction extends BaseFrame {
 
     /**
      * Creates new form transaction
