@@ -291,7 +291,7 @@ public class AdminDashboard extends BaseFrame {
     private void loadDashboardCounts() {
         try (Connection conn = config.connectDB()) {
 
-            String userSQL = "SELECT COUNT(*) FROM tbl_user WHERE u_type='customer'";
+            String userSQL = "SELECT COUNT(*) FROM tbl_user WHERE u_type='Customer'";
             PreparedStatement psUser = conn.prepareStatement(userSQL);
             ResultSet rsUser = psUser.executeQuery();
             if (rsUser.next()) {

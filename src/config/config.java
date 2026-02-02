@@ -122,4 +122,55 @@ public class config {
         }
     }
 
+    public boolean updateEmail(String oldEmail, String password, String newEmail) {
+        String sql = "UPDATE tbl_user SET u_email = ? WHERE u_email = ? AND u_pass = ?";
+
+        try (Connection conn = connectDB();
+                PreparedStatement pst = conn.prepareStatement(sql)) {
+
+            pst.setString(1, newEmail);
+            pst.setString(2, oldEmail);
+            pst.setString(3, password);
+
+            return pst.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            System.out.println("Update email error: " + e.getMessage());
+        }
+        return false;
+    }
+
+    public boolean updatePassword(String email, String oldPass, String newPass) {
+        String sql = "UPDATE tbl_user SET u_pass = ? WHERE u_email = ? AND u_pass = ?";
+
+        try (Connection conn = connectDB();
+                PreparedStatement pst = conn.prepareStatement(sql)) {
+
+            pst.setString(1, newPass);
+            pst.setString(2, email);
+            pst.setString(3, oldPass);
+
+            return pst.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            System.out.println("Update password error: " + e.getMessage());
+        }
+        return false;
+    }
+
+    public boolean deleteAccount(String email) {
+        String sql = "DELETE FROM tbl_user WHERE u_email = ?";
+
+        try (Connection conn = connectDB();
+                PreparedStatement pst = conn.prepareStatement(sql)) {
+
+            pst.setString(1, email);
+            return pst.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            System.out.println("Delete account error: " + e.getMessage());
+        }
+        return false;
+    }
+
 }

@@ -237,19 +237,37 @@ public class Login extends BaseFrame {
         String email = blank.getText();
         String password = new String(jPasswordField1.getPassword());
 
-        config conf = new config();  // create an instance of your config class
+        config conf = new config();
         config.LoginResult result = conf.loginUserDetailed(email, password);
 
         if (result != null) {
-            Session.userEmail = result.email; // ✅ save email in session
-            System.out.println("Logged in as: " + Session.userEmail);
 
-            // Open Profile
-            Home Home = new Home();
-            Home.setVisible(true);
-            Home.pack();
-            Home.setLocationRelativeTo(null);
-            this.dispose();
+            Session.userEmail = result.email;
+            System.out.println("Logged in as: " + Session.userEmail);
+            System.out.println("User type: " + result.userType);
+
+            // ✅ Check user type
+            if ("Admin".equalsIgnoreCase(result.userType)) {
+
+                AdminDashboard admin = new AdminDashboard();
+                admin.setVisible(true);
+                admin.pack();
+                admin.setLocationRelativeTo(null);
+                this.dispose();
+
+            } else if ("Customer".equalsIgnoreCase(result.userType)) {
+
+                Home home = new Home();
+                home.setVisible(true);
+                home.pack();
+                home.setLocationRelativeTo(null);
+                this.dispose();
+
+            } else {
+                JOptionPane.showMessageDialog(this,
+                        "Unknown user type: " + result.userType);
+            }
+
         } else {
             JOptionPane.showMessageDialog(this, "Invalid login");
         }

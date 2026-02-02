@@ -51,7 +51,6 @@ public class landingpage extends BaseFrame {
         jPanel1.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 110, 260, 50));
 
         viewbutton.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        viewbutton.setForeground(new java.awt.Color(34, 61, 114));
         viewbutton.setText("View all");
         viewbutton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
