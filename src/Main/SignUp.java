@@ -1,4 +1,3 @@
-
 package Main;
 
 import design.BaseFrame;
@@ -6,12 +5,10 @@ import javax.swing.JOptionPane;
 
 public class SignUp extends BaseFrame {
 
- 
     public SignUp() {
         initComponents();
     }
 
-  
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -201,45 +198,46 @@ public class SignUp extends BaseFrame {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
-        
-        
+
         Login LoginFrame = new Login();
         LoginFrame.setVisible(true);
         LoginFrame.pack();
-        LoginFrame.setLocationRelativeTo(null); 
+        LoginFrame.setLocationRelativeTo(null);
         this.dispose();
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+
         LoginAndSignUp service = new LoginAndSignUp();
 
-    boolean success = service.signUp(
-        jTextField1.getText(),
-        jTextField2.getText(),
-        new String(jPasswordField1.getPassword())
-    );
+        // Store the result in a string
+        String result = service.signUp(
+                jTextField1.getText(),
+                jTextField2.getText(),
+                new String(jPasswordField1.getPassword())
+        );
 
-    if (success) {
-        JOptionPane.showMessageDialog(this, "Account Recorded!");
-        new Login().setVisible(true);
-        this.dispose();
-    } else {
-        JOptionPane.showMessageDialog(this, "Signup failed");
-    }
-    
+        // Compare it properly
+        if ("SUCCESS".equals(result)) {
+            JOptionPane.showMessageDialog(this, "Account Recorded!");
+            new Login().setVisible(true);
+            this.dispose();
+        } else {
+            // Show the specific validation message
+            JOptionPane.showMessageDialog(this, result);
+        }
+
+
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jLabel9MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel9MouseClicked
-        
-        
+
         landingpage landingpage = new landingpage();
         landingpage.setVisible(true);
         landingpage.pack();
         landingpage.setLocationRelativeTo(null);
         this.dispose();
     }//GEN-LAST:event_jLabel9MouseClicked
-
-    
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

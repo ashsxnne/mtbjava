@@ -3,11 +3,10 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/mtbjava/src/design/BaseFrame.java</file>
-            <file>file:/C:/mtbjava/src/Admin/AdminDashboard.java</file>
-            <file>file:/C:/mtbjava/src/User/updatedetails.java</file>
-            <file>file:/C:/mtbjava/src/config/config.java</file>
-            <file>file:/C:/mtbjava/src/User/Profile.java</file>
+            <file>file:/D:/mtbjava/src/User/Home.java</file>
+            <file>file:/D:/mtbjava/src/config/config.java</file>
+            <file>file:/D:/mtbjava/src/config/Session.java</file>
+            <file>file:/D:/mtbjava/src/User/Profile.java</file>
         </group>
     </open-files>
 </project-private>

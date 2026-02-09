@@ -234,19 +234,43 @@ public class Login extends BaseFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {
 
-        String email = blank.getText();
+        String email = blank.getText().trim();
         String password = new String(jPasswordField1.getPassword());
 
+        // 1️⃣ Empty fields check
+        if (email.isEmpty() || password.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please fill in all fields.");
+            return;
+        }
+
+        // 2️⃣ Email format check
+        if (!email.contains("@")) {
+            JOptionPane.showMessageDialog(this, "Email must contain '@'.");
+            return;
+        }
+
         config conf = new config();
+
+        // 3️⃣ Check if email exists
+        if (!conf.isEmailExists(email)) {
+            JOptionPane.showMessageDialog(this, "Email not registered.");
+            return;
+        }
+
         config.LoginResult result = conf.loginUserDetailed(email, password);
 
         if (result != null) {
 
-            Session.userEmail = result.email;
-            System.out.println("Logged in as: " + Session.userEmail);
-            System.out.println("User type: " + result.userType);
+            // 🔒 CHECK ACTIVATION FIRST
+            if (result.status == 0) {
+                JOptionPane.showMessageDialog(this,
+                        "Your account is not activated yet. Please wait for admin approval.");
+                return;
+            }
 
-            // ✅ Check user type
+            // Only set session AFTER activation check
+            Session.userEmail = result.email;
+
             if ("Admin".equalsIgnoreCase(result.userType)) {
 
                 AdminDashboard admin = new AdminDashboard();
@@ -269,8 +293,9 @@ public class Login extends BaseFrame {
             }
 
         } else {
-            JOptionPane.showMessageDialog(this, "Invalid login");
+            JOptionPane.showMessageDialog(this, "Incorrect password.");
         }
+
     }
 
 

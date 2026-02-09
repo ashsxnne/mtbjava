@@ -173,4 +173,41 @@ public class config {
         return false;
     }
 
+    public boolean isEmailExists(String email) {
+        String sql = "SELECT u_email FROM tbl_user WHERE u_email = ?";
+
+        try (Connection conn = connectDB();
+                PreparedStatement pst = conn.prepareStatement(sql)) {
+
+            pst.setString(1, email);
+
+            try (ResultSet rs = pst.executeQuery()) {
+                return rs.next(); // true if email already exists
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Email check error: " + e.getMessage());
+        }
+
+        return false;
+    }
+
+    public void displayData(String sql, javax.swing.JTable table, Object... values) {
+        try (Connection conn = connectDB();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            // Set the parameters for the search
+            for (int i = 0; i < values.length; i++) {
+                pstmt.setObject(i + 1, values[i]);
+            }
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                // Automatically maps the filtered ResultSet to your JTable
+                table.setModel(DbUtils.resultSetToTableModel(rs));
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error filtering data: " + e.getMessage());
+        }
+    }
 }
