@@ -20,5 +20,9 @@ public class Session {
         userEmail = null;
     }
     
+    public static String getEmail() {
+        return userEmail;
+    }
+    
 }
 

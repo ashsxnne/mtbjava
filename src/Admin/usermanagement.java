@@ -30,7 +30,7 @@ public class usermanagement extends BaseFrame {
      */
     public usermanagement() {
 
-        // Check session first
+        /// Check session first
         if (!Session.isLoggedIn()) {
             JOptionPane.showMessageDialog(null, "You need to login first.");
             new Login().setVisible(true); // send user to login
@@ -50,6 +50,84 @@ public class usermanagement extends BaseFrame {
 
         usertable.setRowHeight(35);
 
+        // ===== FIXED: Use jTextField1 instead of textField1 =====
+        jTextField1.setText("Search users...");
+        jTextField1.setForeground(Color.GRAY);
+        jTextField1.setFont(new Font("Segoe UI", Font.PLAIN, 18));
+
+        jTextField1.addFocusListener(new java.awt.event.FocusAdapter() {
+            @Override
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                if (jTextField1.getText().equals("Search users...")) {
+                    jTextField1.setText("");
+                    jTextField1.setForeground(Color.BLACK);
+                }
+            }
+
+            @Override
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                if (jTextField1.getText().isEmpty()) {
+                    jTextField1.setText("Search users...");
+                    jTextField1.setForeground(Color.GRAY);
+                }
+            }
+        });
+
+        // Styling
+        jTextField1.setBackground(Color.WHITE);
+        jTextField1.setBorder(javax.swing.BorderFactory.createCompoundBorder(
+                javax.swing.BorderFactory.createLineBorder(new Color(200, 200, 200), 2),
+                javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10)
+        ));
+
+        // Key listener for searching users
+        jTextField1.addKeyListener(new java.awt.event.KeyAdapter() {
+            @Override
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                String search = jTextField1.getText().trim();
+                filterUsers(search);
+            }
+        });
+    }
+
+    private void filterUsers(String keyword) {
+        DefaultTableModel model = (DefaultTableModel) usertable.getModel();
+        model.setRowCount(0); // Clear table
+
+        String url = "jdbc:sqlite:mtb.db";
+        String currentUserEmail = Session.getEmail();
+
+        String sql = "SELECT * FROM tbl_user WHERE u_email != ? AND "
+                + "(u_id LIKE ? OR u_name LIKE ? OR u_email LIKE ? OR u_type LIKE ? OR u_status LIKE ?)";
+
+        try (Connection con = DriverManager.getConnection(url);
+                PreparedStatement pst = con.prepareStatement(sql)) {
+
+            pst.setString(1, currentUserEmail);
+            pst.setString(2, "%" + keyword + "%");
+            pst.setString(3, "%" + keyword + "%");
+            pst.setString(4, "%" + keyword + "%");
+            pst.setString(5, "%" + keyword + "%");
+            pst.setString(6, "%" + keyword + "%");
+
+            try (ResultSet rs = pst.executeQuery()) {
+                while (rs.next()) {
+                    Object[] row = {
+                        rs.getInt("u_id"),
+                        rs.getString("u_name"),
+                        rs.getString("u_email"),
+                        rs.getString("u_pass"),
+                        rs.getString("u_type"),
+                        rs.getInt("u_status"),
+                        "Edit"
+                    };
+                    model.addRow(row);
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     private void styleUserTable() {
@@ -79,26 +157,32 @@ public class usermanagement extends BaseFrame {
         DefaultTableModel model = (DefaultTableModel) usertable.getModel();
         model.setRowCount(0); // clear table first
 
-        String url = "jdbc:sqlite:mtb.db"; // change if path is different
-        String sql = "SELECT * FROM tbl_user";
+        String url = "jdbc:sqlite:mtb.db";
+        String currentUserEmail = Session.getEmail(); // get logged-in user's email
+
+        String sql = "SELECT * FROM tbl_user WHERE u_email != ?"; // exclude current user
+
         usertable.getColumnModel().getColumn(3).setMinWidth(0);
         usertable.getColumnModel().getColumn(3).setMaxWidth(0);
 
         try (Connection con = DriverManager.getConnection(url);
-                Statement stmt = con.createStatement();
-                ResultSet rs = stmt.executeQuery(sql)) {
+                PreparedStatement pst = con.prepareStatement(sql)) {
 
-            while (rs.next()) {
-                Object[] row = {
-                    rs.getInt("u_id"),
-                    rs.getString("u_name"),
-                    rs.getString("u_email"),
-                    rs.getString("u_pass"),
-                    rs.getString("u_type"),
-                    rs.getInt("u_status"),
-                    "Edit" // Action column (optional)
-                };
-                model.addRow(row);
+            pst.setString(1, currentUserEmail);
+
+            try (ResultSet rs = pst.executeQuery()) {
+                while (rs.next()) {
+                    Object[] row = {
+                        rs.getInt("u_id"),
+                        rs.getString("u_name"),
+                        rs.getString("u_email"),
+                        rs.getString("u_pass"),
+                        rs.getString("u_type"),
+                        rs.getInt("u_status"),
+                        "Edit"
+                    };
+                    model.addRow(row);
+                }
             }
 
         } catch (SQLException e) {
@@ -120,6 +204,7 @@ public class usermanagement extends BaseFrame {
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
+        jTextField1 = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -225,19 +310,26 @@ public class usermanagement extends BaseFrame {
             .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
+        jTextField1.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+        jTextField1.setText("jTextField1");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 958, Short.MAX_VALUE)
+            .addComponent(jScrollPane1)
             .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jTextField1)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 473, Short.MAX_VALUE))
+                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 423, Short.MAX_VALUE)
+                .addGap(6, 6, 6))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -335,6 +427,7 @@ public class usermanagement extends BaseFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTextField jTextField1;
     private javax.swing.JTable usertable;
     // End of variables declaration//GEN-END:variables
 }

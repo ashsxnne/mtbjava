@@ -302,13 +302,15 @@ public class AdminDashboard extends BaseFrame {
     private void loadDashboardCounts() {
         try (Connection conn = config.connectDB()) {
 
-            String userSQL = "SELECT COUNT(*) FROM tbl_user WHERE u_type='Customer'";
+            // Count only active customers
+            String userSQL = "SELECT COUNT(*) FROM tbl_user WHERE u_type='Customer' AND u_status = 1";
             PreparedStatement psUser = conn.prepareStatement(userSQL);
             ResultSet rsUser = psUser.executeQuery();
             if (rsUser.next()) {
                 animateCount(usersCount, rsUser.getInt(1));
             }
 
+            // Count all bookings
             String bookingSQL = "SELECT COUNT(*) FROM tbl_booking";
             PreparedStatement psBooking = conn.prepareStatement(bookingSQL);
             ResultSet rsBooking = psBooking.executeQuery();
@@ -316,6 +318,7 @@ public class AdminDashboard extends BaseFrame {
                 animateCount(bookingsCount, rsBooking.getInt(1));
             }
 
+            // Count all movies
             String movieSQL = "SELECT COUNT(*) FROM tbl_movies";
             PreparedStatement psMovie = conn.prepareStatement(movieSQL);
             ResultSet rsMovie = psMovie.executeQuery();
