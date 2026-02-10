@@ -5,6 +5,7 @@
  */
 package User;
 
+import Main.Login;
 import design.BaseFrame;
 import Main.landingpage;
 import config.Session;
@@ -25,6 +26,14 @@ public class Profile extends BaseFrame {
      * Creates new form Profile
      */
     public Profile() {
+
+        // Check session first
+        if (!Session.isLoggedIn()) {
+            JOptionPane.showMessageDialog(null, "You need to login first.");
+            new Login().setVisible(true); // send user to login
+            dispose(); // close this frame
+            return;   // stop constructor
+        }
         initComponents();
         System.out.println("SESSION EMAIL = " + Session.userEmail);
         showUserName();
@@ -425,21 +434,20 @@ public class Profile extends BaseFrame {
 
     private void jLabel11MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel11MouseClicked
 
-        // Show confirmation dialog
         int confirm = JOptionPane.showConfirmDialog(
                 this,
                 "Are you sure you want to log out?",
                 "Confirm Logout",
-                JOptionPane.YES_NO_OPTION,
-                JOptionPane.QUESTION_MESSAGE
+                JOptionPane.YES_NO_OPTION
         );
 
         if (confirm == JOptionPane.YES_OPTION) {
-            // User confirmed logout
-            landingpage landingpage = new landingpage();
-            landingpage.setVisible(true);
-            landingpage.pack();
-            landingpage.setLocationRelativeTo(null);
+
+            Session.logout(); // clear session
+
+            JOptionPane.showMessageDialog(this, "Logged out successfully.");
+
+            new Login().setVisible(true);
             this.dispose();
         }
 
@@ -462,49 +470,28 @@ public class Profile extends BaseFrame {
     }//GEN-LAST:event_jLabel7MouseClicked
 
     private void jLabel6MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel6MouseClicked
-        
-        
-        updatedetails updatedetails = new updatedetails();   
-            updatedetails.setVisible(true);
-            updatedetails.pack();
-            updatedetails.setLocationRelativeTo(null);
-            this.dispose();
+
+        updatedetails updatedetails = new updatedetails();
+        updatedetails.setVisible(true);
+        updatedetails.pack();
+        updatedetails.setLocationRelativeTo(null);
+        this.dispose();
     }//GEN-LAST:event_jLabel6MouseClicked
 
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Profile.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Profile.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Profile.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Profile.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
+        java.awt.EventQueue.invokeLater(() -> {
+            if (!Session.isLoggedIn()) {
+                JOptionPane.showMessageDialog(null, "You need to login first.");
+                new Login().setVisible(true);
+            } else {
                 new Profile().setVisible(true);
             }
         });
     }
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel contactus2;

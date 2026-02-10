@@ -1,10 +1,6 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package User;
 
+import Main.Login;
 import Main.landingpage;
 import config.Session;
 import config.config;
@@ -16,6 +12,10 @@ import java.sql.PreparedStatement;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import javax.swing.border.LineBorder;
+import javax.swing.border.EmptyBorder;
 
 /**
  *
@@ -24,10 +24,97 @@ import javax.swing.JPasswordField;
 public class updatedetails extends BaseFrame {
 
     private boolean emailEditMode = false;
-    
+
     public updatedetails() {
+
+        // Check session first
+        if (!Session.isLoggedIn()) {
+            JOptionPane.showMessageDialog(null, "You need to login first.");
+            new Login().setVisible(true); // send user to login
+            dispose(); // close this frame
+            return;   // stop constructor
+        }
+
         initComponents();
         styleAccountCard();
+
+        btnChangePass.addActionListener(evt -> {
+            // Ask current password
+            JPasswordField pfOld = new JPasswordField();
+            int ok = JOptionPane.showConfirmDialog(this, pfOld, "Enter current password", JOptionPane.OK_CANCEL_OPTION);
+            if (ok != JOptionPane.OK_OPTION) {
+                return;
+            }
+
+            String oldPass = String.valueOf(pfOld.getPassword());
+
+            // Ask new password
+            JPasswordField pfNew = new JPasswordField();
+            ok = JOptionPane.showConfirmDialog(this, pfNew, "Enter new password", JOptionPane.OK_CANCEL_OPTION);
+            if (ok != JOptionPane.OK_OPTION) {
+                return;
+            }
+
+            String newPass = String.valueOf(pfNew.getPassword());
+
+            if (newPass.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "New password cannot be empty");
+                return;
+            }
+
+            config db = new config();
+            if (db.updatePassword(Session.userEmail, oldPass, newPass)) {
+                JOptionPane.showMessageDialog(this, "Password updated successfully!");
+            } else {
+                JOptionPane.showMessageDialog(this, "Incorrect current password. Password not changed.");
+            }
+        });
+
+        btnDeleteAccount.addActionListener(evt -> {
+            // Confirm deletion
+            int confirm = JOptionPane.showConfirmDialog(
+                    this,
+                    "Are you sure you want to delete your account? This action cannot be undone.",
+                    "Confirm Delete",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.WARNING_MESSAGE
+            );
+
+            if (confirm != JOptionPane.YES_OPTION) {
+                return; // user cancelled
+            }
+
+            // Ask for password
+            JPasswordField pf = new JPasswordField();
+            int ok = JOptionPane.showConfirmDialog(
+                    this,
+                    pf,
+                    "Enter your password to confirm",
+                    JOptionPane.OK_CANCEL_OPTION,
+                    JOptionPane.PLAIN_MESSAGE
+            );
+
+            if (ok != JOptionPane.OK_OPTION) {
+                return; // user cancelled
+            }
+
+            String password = String.valueOf(pf.getPassword());
+
+            config db = new config();
+            boolean deleted = db.deleteAccount(Session.userEmail, password); // You need to implement this method
+
+            if (deleted) {
+                JOptionPane.showMessageDialog(this, "Account deleted successfully!");
+                Session.logout(); // clear session
+                landingpage landing = new landingpage();
+                landing.setVisible(true);
+                landing.pack();
+                landing.setLocationRelativeTo(null);
+                this.dispose();
+            } else {
+                JOptionPane.showMessageDialog(this, "Incorrect password. Account not deleted.");
+            }
+        });
 
     }
 
@@ -43,32 +130,82 @@ public class updatedetails extends BaseFrame {
     }
 
     private void styleAccountCard() {
+        // Card panel style
+
+        jPanel2.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                jPanel2.setBackground(new Color(250, 250, 250));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                jPanel2.setBackground(Color.WHITE);
+            }
+        });
 
         jPanel2.setBackground(Color.WHITE);
-        jPanel2.setBorder(
-                javax.swing.BorderFactory.createLineBorder(
-                        new Color(220, 220, 220), 1
-                )
-        );
+        jPanel2.setBorder(new LineBorder(new Color(220, 220, 220), 2, true)); // rounded border
         jPanel2.setOpaque(true);
+        jPanel2.setLayout(new javax.swing.BoxLayout(jPanel2, javax.swing.BoxLayout.Y_AXIS));
+        jPanel2.setBorder(new EmptyBorder(20, 20, 20, 20)); // padding inside card
 
-        lblTitle.setFont(new Font("Segoe UI", Font.BOLD, 22));
-        lblEmailTitle.setText("Email address");
+        // Titles
+        lblTitle.setFont(new Font("Segoe UI", Font.BOLD, 26));
+        lblEmailTitle.setText("Email Address");
         lblPassTitle.setText("Password");
 
+        // Fields
         txtEmail.setText(Session.userEmail);
         txtEmail.setEnabled(false);
+        txtEmail.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+        txtEmail.setBackground(new Color(245, 245, 245));
+        txtEmail.setBorder(new LineBorder(new Color(200, 200, 200), 1, true));
+        txtEmail.setPreferredSize(new java.awt.Dimension(250, 35));  // <--- add here
 
         txtPassword.setText("********");
         txtPassword.setEnabled(false);
+        txtPassword.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+        txtPassword.setBackground(new Color(245, 245, 245));
+        txtPassword.setBorder(new LineBorder(new Color(200, 200, 200), 1, true));
+        txtPassword.setPreferredSize(new java.awt.Dimension(250, 35));  // <--- add here
 
-        styleOutlineButton(btnChangeEmail);
-        styleOutlineButton(btnChangePass);
-        styleOutlineButton(btnDeleteAccount);
-
+        // Buttons
         btnChangeEmail.setText("Change");
+        btnChangeEmail.setPreferredSize(new java.awt.Dimension(100, 35));  // <--- add here
+
         btnChangePass.setText("Change");
-        btnDeleteAccount.setText("Delete account");
+        btnChangePass.setPreferredSize(new java.awt.Dimension(100, 35));  // <--- add here
+
+        btnDeleteAccount.setText("Delete Account");
+        btnDeleteAccount.setPreferredSize(new java.awt.Dimension(200, 40));  // <--- add here
+
+        addHoverEffect(btnChangeEmail);
+        addHoverEffect(btnChangePass);
+        addHoverEffect(btnDeleteAccount);
+
+    }
+
+    private void addHoverEffect(JButton btn) {
+
+        btn.setFocusPainted(false);
+        btn.setBorder(new LineBorder(new Color(0, 102, 255), 1));
+        btn.setBackground(Color.WHITE);
+        btn.setForeground(new Color(0, 102, 255));
+
+        btn.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btn.setBackground(new Color(0, 102, 255));
+                btn.setForeground(Color.WHITE);
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btn.setBackground(Color.WHITE);
+                btn.setForeground(new Color(0, 102, 255));
+            }
+        });
     }
 
     /**
@@ -286,8 +423,18 @@ public class updatedetails extends BaseFrame {
         lblPassTitle.setText("lblPassTitle");
 
         txtPassword.setText("txtPassword");
+        txtPassword.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                txtPasswordMouseClicked(evt);
+            }
+        });
 
         btnChangePass.setText("jButton1");
+        btnChangePass.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnChangePassMouseClicked(evt);
+            }
+        });
 
         btnDeleteAccount.setText("jButton1");
 
@@ -485,6 +632,15 @@ public class updatedetails extends BaseFrame {
 
         config db = new config();
 
+        if (db.isEmailExists(newEmail)) {
+            JOptionPane.showMessageDialog(this, "This email is already taken.");
+            txtEmail.setText(Session.userEmail);
+            txtEmail.setEnabled(false);
+            btnChangeEmail.setText("Change");
+            emailEditMode = false;
+            return;
+        }
+
         if (db.updateEmail(Session.userEmail, password, newEmail)) {
             Session.userEmail = newEmail;
 
@@ -494,40 +650,34 @@ public class updatedetails extends BaseFrame {
 
             JOptionPane.showMessageDialog(this, "Email updated successfully");
         } else {
-            JOptionPane.showMessageDialog(this, "Incorrect password");
+            // Reset the field to the original email
+            txtEmail.setText(Session.userEmail);
+            txtEmail.setEnabled(false);
+            btnChangeEmail.setText("Change");
+            emailEditMode = false;
+
+            JOptionPane.showMessageDialog(this, "Incorrect password. Email not updated.");
         }
+
     }//GEN-LAST:event_btnChangeEmailActionPerformed
+
+    private void txtPasswordMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtPasswordMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtPasswordMouseClicked
+
+    private void btnChangePassMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnChangePassMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnChangePassMouseClicked
 
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(updatedetails.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(updatedetails.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(updatedetails.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(updatedetails.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
+        java.awt.EventQueue.invokeLater(() -> {
+            if (!Session.isLoggedIn()) {
+                JOptionPane.showMessageDialog(null, "You need to login first.");
+                new Login().setVisible(true);
+            } else {
                 new updatedetails().setVisible(true);
             }
         });

@@ -1,6 +1,8 @@
 package Admin;
 
+import Main.Login;
 import Main.landingpage;
+import config.Session;
 import design.BaseFrame;
 import config.config;
 import java.sql.Connection;
@@ -23,6 +25,15 @@ import javax.swing.JLabel;
 public class AdminDashboard extends BaseFrame {
 
     public AdminDashboard() {
+
+        // Check session first
+        if (!Session.isLoggedIn()) {
+            JOptionPane.showMessageDialog(null, "You need to login first.");
+            new Login().setVisible(true); // send user to login
+            dispose(); // close this frame
+            return;   // stop constructor
+        }
+
         initComponents();
 
         setupStatCard(cardUsers, new Color(120, 190, 255), "Customers", "👥", usersCount);
@@ -413,66 +424,42 @@ public class AdminDashboard extends BaseFrame {
     }//GEN-LAST:event_jLabel6MouseClicked
 
     private void jLabel2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel2MouseClicked
-        
-        
+
         AdminDashboard AdminDashboard = new AdminDashboard();   // or your main frame
-            AdminDashboard.setVisible(true);
-            AdminDashboard.pack();
-            AdminDashboard.setLocationRelativeTo(null);
-            this.dispose();
+        AdminDashboard.setVisible(true);
+        AdminDashboard.pack();
+        AdminDashboard.setLocationRelativeTo(null);
+        this.dispose();
 
     }//GEN-LAST:event_jLabel2MouseClicked
 
     private void jLabel4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel4MouseClicked
-        
-        
+
         moviemanagement moviemanagement = new moviemanagement();   // or your main frame
-            moviemanagement.setVisible(true);
-            moviemanagement.pack();
-            moviemanagement.setLocationRelativeTo(null);
-            this.dispose();
+        moviemanagement.setVisible(true);
+        moviemanagement.pack();
+        moviemanagement.setLocationRelativeTo(null);
+        this.dispose();
     }//GEN-LAST:event_jLabel4MouseClicked
 
     private void jLabel5MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel5MouseClicked
-        
-        
+
         bookingmanagement bookingmanagement = new bookingmanagement();   // or your main frame
-            bookingmanagement.setVisible(true);
-            bookingmanagement.pack();
-            bookingmanagement.setLocationRelativeTo(null);
-            this.dispose();
+        bookingmanagement.setVisible(true);
+        bookingmanagement.pack();
+        bookingmanagement.setLocationRelativeTo(null);
+        this.dispose();
     }//GEN-LAST:event_jLabel5MouseClicked
 
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(AdminDashboard.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(AdminDashboard.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(AdminDashboard.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(AdminDashboard.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
+        java.awt.EventQueue.invokeLater(() -> {
+            if (!Session.isLoggedIn()) {
+                JOptionPane.showMessageDialog(null, "You need to login first.");
+                new Login().setVisible(true);
+            } else {
                 new AdminDashboard().setVisible(true);
             }
         });

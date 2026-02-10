@@ -158,19 +158,21 @@ public class config {
         return false;
     }
 
-    public boolean deleteAccount(String email) {
-        String sql = "DELETE FROM tbl_user WHERE u_email = ?";
+    public boolean deleteAccount(String email, String password) {
+        String sql = "DELETE FROM tbl_user WHERE u_email = ? AND u_pass = ?";
 
-        try (Connection conn = connectDB();
+        try (Connection conn = connectDB(); // <-- use connectDB()
                 PreparedStatement pst = conn.prepareStatement(sql)) {
 
             pst.setString(1, email);
-            return pst.executeUpdate() > 0;
+            pst.setString(2, password);
+            int affected = pst.executeUpdate();
+            return affected > 0; // true if deleted
 
         } catch (SQLException e) {
             System.out.println("Delete account error: " + e.getMessage());
+            return false;
         }
-        return false;
     }
 
     public boolean isEmailExists(String email) {
@@ -210,4 +212,5 @@ public class config {
             System.out.println("Error filtering data: " + e.getMessage());
         }
     }
+
 }

@@ -10,6 +10,15 @@ package config;
  * @author ph2tn
  */
 public class Session {
-    public static String userEmail;
+    public static String userEmail = null;
+
+    public static boolean isLoggedIn() {
+        return userEmail != null;
+    }
+
+    public static void logout() {
+        userEmail = null;
+    }
     
 }
+

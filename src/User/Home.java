@@ -1,7 +1,9 @@
 package User;
 
+import Main.Login;
 import design.BaseFrame;
-import User.Profile;
+import config.Session;
+import javax.swing.JOptionPane;
 
 public class Home extends BaseFrame {
 
@@ -9,6 +11,14 @@ public class Home extends BaseFrame {
      * Creates new form Home
      */
     public Home() {
+
+        // Check session first
+        if (!Session.isLoggedIn()) {
+            JOptionPane.showMessageDialog(null, "You need to login first.");
+            new Login().setVisible(true); // send user to login
+            dispose(); // close this frame
+            return;   // stop constructor
+        }
         initComponents();
     }
 
@@ -35,6 +45,7 @@ public class Home extends BaseFrame {
         privacy = new javax.swing.JLabel();
         termofservice = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
+        scrollPane1 = new java.awt.ScrollPane();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(255, 255, 255));
@@ -117,6 +128,12 @@ public class Home extends BaseFrame {
         jLabel1.setText("© 2026 MTB. All rights reserved.");
         jPanel3.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 20, 230, 20));
 
+        scrollPane1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                scrollPane1MouseClicked(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -127,7 +144,10 @@ public class Home extends BaseFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(25, 25, 25))
-            .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, 960, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(scrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -136,7 +156,9 @@ public class Home extends BaseFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 381, Short.MAX_VALUE)
+                .addGap(139, 139, 139)
+                .addComponent(scrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 95, Short.MAX_VALUE)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
@@ -165,57 +187,39 @@ public class Home extends BaseFrame {
     }//GEN-LAST:event_jLabel3MouseClicked
 
     private void jLabel4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel4MouseClicked
-        
-        
-        Movies Movies = new Movies();   
-            Movies.setVisible(true);
-            Movies.pack();
-            Movies.setLocationRelativeTo(null);
-            this.dispose();
+
+        Movies Movies = new Movies();
+        Movies.setVisible(true);
+        Movies.pack();
+        Movies.setLocationRelativeTo(null);
+        this.dispose();
 
     }//GEN-LAST:event_jLabel4MouseClicked
 
     private void jLabel2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel2MouseClicked
-        
-        
-        Profile Profile = new Profile();   
-            Profile.setVisible(true);
-            Profile.pack();
-            Profile.setLocationRelativeTo(null);
-            this.dispose();
+
+        Profile Profile = new Profile();
+        Profile.setVisible(true);
+        Profile.pack();
+        Profile.setLocationRelativeTo(null);
+        this.dispose();
 
     }//GEN-LAST:event_jLabel2MouseClicked
+
+    private void scrollPane1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_scrollPane1MouseClicked
+
+        //scroll
+    }//GEN-LAST:event_scrollPane1MouseClicked
 
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Home.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Home.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Home.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Home.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
+        java.awt.EventQueue.invokeLater(() -> {
+            if (!Session.isLoggedIn()) {
+                JOptionPane.showMessageDialog(null, "You need to login first.");
+                new Login().setVisible(true);
+            } else {
                 new Home().setVisible(true);
             }
         });
@@ -235,6 +239,7 @@ public class Home extends BaseFrame {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JLabel privacy;
+    private java.awt.ScrollPane scrollPane1;
     private javax.swing.JLabel termofservice;
     // End of variables declaration//GEN-END:variables
 }
