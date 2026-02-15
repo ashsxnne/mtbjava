@@ -37,6 +37,34 @@ public class updatedetails extends BaseFrame {
 
         initComponents();
 
+        // LEFT: Logo
+        jPanel5.add(jLabel5, java.awt.BorderLayout.WEST);
+
+// RIGHT: Navigation panel
+        javax.swing.JPanel navPanel = new javax.swing.JPanel();
+        navPanel.setOpaque(false);
+        navPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT, 40, 30));
+
+        navPanel.add(jLabel3); // Home
+        navPanel.add(jLabel4); // Movies
+        navPanel.add(jLabel2); // Profile
+
+        // LEFT side
+        jPanel8.add(jLabel13, java.awt.BorderLayout.WEST);
+
+// RIGHT side
+        javax.swing.JPanel footerRight = new javax.swing.JPanel();
+        footerRight.setOpaque(false);
+        footerRight.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT, 25, 15));
+
+        footerRight.add(privacy2);
+        footerRight.add(termofservice2);
+        footerRight.add(contactus2);
+
+        jPanel8.add(footerRight, java.awt.BorderLayout.EAST);
+
+        jPanel5.add(navPanel, java.awt.BorderLayout.EAST);
+
         setMenuIcon(jLabel8, "/imagesicons/over.png");       // Overview
         setMenuIcon(jLabel6, "/imagesicons/update.png");     // Update details
         setMenuIcon(jLabel10, "/imagesicons/booking.png");   // Bookings
@@ -50,7 +78,7 @@ public class updatedetails extends BaseFrame {
         addHoverEffect(jLabel9);
         addHoverEffect(jLabel12);
         addHoverEffect(jLabel11);
-        
+
         styleAccountCard();
 
         btnChangePass.addActionListener(evt -> {
@@ -143,7 +171,7 @@ public class updatedetails extends BaseFrame {
                 )
         );
     }
-    
+
     private void setMenuIcon(javax.swing.JLabel label, String path) {
         label.setIcon(new javax.swing.ImageIcon(getClass().getResource(path)));
         label.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
@@ -180,15 +208,26 @@ public class updatedetails extends BaseFrame {
         });
 
         jPanel2.setBackground(Color.WHITE);
-        jPanel2.setBorder(new LineBorder(new Color(220, 220, 220), 2, true)); // rounded border
         jPanel2.setOpaque(true);
-        jPanel2.setLayout(new javax.swing.BoxLayout(jPanel2, javax.swing.BoxLayout.Y_AXIS));
-        jPanel2.setBorder(new EmptyBorder(20, 20, 20, 20)); // padding inside card
+
+        jPanel2.setBorder(
+                javax.swing.BorderFactory.createCompoundBorder(
+                        new LineBorder(new Color(220, 220, 220), 2, true), // outer border
+                        new EmptyBorder(30, 40, 30, 40) // inner padding
+                )
+        );
 
         // Titles
-        lblTitle.setFont(new Font("Segoe UI", Font.BOLD, 26));
-        lblEmailTitle.setText("Email Address");
-        lblPassTitle.setText("Password");
+        lblTitle.setFont(new Font("Segoe UI", Font.BOLD, 28));
+        lblEmailTitle.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+        lblPassTitle.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+
+        txtEmail.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+        txtPassword.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+
+        btnChangeEmail.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        btnChangePass.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        btnDeleteAccount.setFont(new Font("Segoe UI", Font.PLAIN, 14));
 
         // Fields
         txtEmail.setText(Session.userEmail);
@@ -206,19 +245,70 @@ public class updatedetails extends BaseFrame {
         txtPassword.setPreferredSize(new java.awt.Dimension(250, 35));  // <--- add here
 
         // Buttons
-        btnChangeEmail.setText("Change");
-        btnChangeEmail.setPreferredSize(new java.awt.Dimension(100, 35));  // <--- add here
-
-        btnChangePass.setText("Change");
-        btnChangePass.setPreferredSize(new java.awt.Dimension(100, 35));  // <--- add here
-
         btnDeleteAccount.setText("Delete Account");
-        btnDeleteAccount.setPreferredSize(new java.awt.Dimension(200, 40));  // <--- add here
+        btnChangeEmail.setText("Change");
+        btnChangePass.setText("Change");
 
-        addHoverEffect(btnChangeEmail);
-        addHoverEffect(btnChangePass);
-        addHoverEffect(btnDeleteAccount);
+        lblEmailTitle.setText("Email Address");
+        lblPassTitle.setText("Password");
 
+        btnChangeEmail.setPreferredSize(new java.awt.Dimension(120, 40));
+        btnChangePass.setPreferredSize(new java.awt.Dimension(120, 40));
+        btnDeleteAccount.setPreferredSize(new java.awt.Dimension(180, 45));
+
+        btnDeleteAccount.setBorder(new EmptyBorder(8, 25, 8, 25));
+        btnDeleteAccount.setBackground(new Color(220, 53, 69));
+        btnDeleteAccount.setForeground(Color.WHITE);
+        btnDeleteAccount.setFocusPainted(false);
+
+        Font titleFont = new Font("Segoe UI", Font.BOLD, 28);
+        Font labelFont = new Font("Segoe UI", Font.PLAIN, 18);
+        Font fieldFont = new Font("Segoe UI", Font.PLAIN, 16);
+
+        stylePrimaryButton(btnChangeEmail);
+        stylePrimaryButton(btnChangePass);
+        styleDangerButton(btnDeleteAccount);
+
+    }
+
+    private void stylePrimaryButton(JButton btn) {
+
+        btn.setFocusPainted(false);
+        btn.setBackground(new Color(0, 102, 255));
+        btn.setForeground(Color.WHITE);
+        btn.setBorder(new EmptyBorder(8, 20, 8, 20));
+
+        btn.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btn.setBackground(new Color(0, 85, 210));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btn.setBackground(new Color(0, 102, 255));
+            }
+        });
+    }
+
+    private void styleDangerButton(JButton btn) {
+
+        btn.setFocusPainted(false);
+        btn.setBackground(new Color(220, 53, 69));
+        btn.setForeground(Color.WHITE);
+        btn.setBorder(new EmptyBorder(10, 25, 10, 25));
+
+        btn.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btn.setBackground(new Color(200, 35, 51));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btn.setBackground(new Color(220, 53, 69));
+            }
+        });
     }
 
     private void addHoverEffect(JButton btn) {
@@ -270,8 +360,8 @@ public class updatedetails extends BaseFrame {
         jPanel8 = new javax.swing.JPanel();
         contactus2 = new javax.swing.JLabel();
         privacy2 = new javax.swing.JLabel();
-        termofservice2 = new javax.swing.JLabel();
         jLabel13 = new javax.swing.JLabel();
+        termofservice2 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         lblTitle = new javax.swing.JLabel();
         lblEmailTitle = new javax.swing.JLabel();
@@ -289,11 +379,11 @@ public class updatedetails extends BaseFrame {
         jPanel1.setRequestFocusEnabled(false);
 
         jPanel5.setBackground(new java.awt.Color(207, 201, 234));
-        jPanel5.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        jPanel5.setLayout(new java.awt.BorderLayout());
 
         jLabel5.setForeground(new java.awt.Color(255, 255, 255));
         jLabel5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagesicons/mtblogo3.png"))); // NOI18N
-        jPanel5.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 10, 120, -1));
+        jPanel5.add(jLabel5, java.awt.BorderLayout.CENTER);
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         jLabel2.setText("Profile");
@@ -302,7 +392,7 @@ public class updatedetails extends BaseFrame {
                 jLabel2MouseClicked(evt);
             }
         });
-        jPanel5.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(790, 30, -1, -1));
+        jPanel5.add(jLabel2, java.awt.BorderLayout.PAGE_START);
 
         jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         jLabel3.setText("Home");
@@ -311,7 +401,7 @@ public class updatedetails extends BaseFrame {
                 jLabel3MouseClicked(evt);
             }
         });
-        jPanel5.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 30, -1, -1));
+        jPanel5.add(jLabel3, java.awt.BorderLayout.PAGE_END);
 
         jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         jLabel4.setText("Movies");
@@ -320,7 +410,7 @@ public class updatedetails extends BaseFrame {
                 jLabel4MouseClicked(evt);
             }
         });
-        jPanel5.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(660, 30, -1, -1));
+        jPanel5.add(jLabel4, java.awt.BorderLayout.LINE_END);
 
         jPanel3.setBackground(new java.awt.Color(207, 201, 234));
 
@@ -328,6 +418,11 @@ public class updatedetails extends BaseFrame {
 
         jLabel6.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         jLabel6.setText("Update Details");
+        jLabel6.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel6MouseClicked(evt);
+            }
+        });
 
         jLabel8.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         jLabel8.setText("Overview");
@@ -339,9 +434,19 @@ public class updatedetails extends BaseFrame {
 
         jLabel9.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         jLabel9.setText("Transactions");
+        jLabel9.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel9MouseClicked(evt);
+            }
+        });
 
         jLabel10.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         jLabel10.setText("Bookings");
+        jLabel10.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel10MouseClicked(evt);
+            }
+        });
 
         jLabel11.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         jLabel11.setText("Log out");
@@ -353,6 +458,11 @@ public class updatedetails extends BaseFrame {
 
         jLabel12.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         jLabel12.setText("Watch lists");
+        jLabel12.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel12MouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
@@ -390,7 +500,7 @@ public class updatedetails extends BaseFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel12, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(38, 38, 38)
-                .addComponent(jLabel11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel11, javax.swing.GroupLayout.DEFAULT_SIZE, 33, Short.MAX_VALUE)
                 .addGap(31, 31, 31))
         );
 
@@ -412,27 +522,27 @@ public class updatedetails extends BaseFrame {
         );
 
         jPanel8.setBackground(new java.awt.Color(207, 201, 234));
-        jPanel8.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        jPanel8.setLayout(new java.awt.BorderLayout());
 
         contactus2.setBackground(new java.awt.Color(34, 61, 114));
         contactus2.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         contactus2.setText("Contact Us");
-        jPanel8.add(contactus2, new org.netbeans.lib.awtextra.AbsoluteConstraints(820, 20, 100, 20));
+        jPanel8.add(contactus2, java.awt.BorderLayout.CENTER);
 
         privacy2.setBackground(new java.awt.Color(55, 131, 245));
         privacy2.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         privacy2.setText("Privacy Policy");
-        jPanel8.add(privacy2, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 20, 110, 20));
-
-        termofservice2.setBackground(new java.awt.Color(34, 61, 114));
-        termofservice2.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        termofservice2.setText("Terms of Service");
-        jPanel8.add(termofservice2, new org.netbeans.lib.awtextra.AbsoluteConstraints(670, 20, 140, 20));
+        jPanel8.add(privacy2, java.awt.BorderLayout.PAGE_START);
 
         jLabel13.setBackground(new java.awt.Color(0, 0, 0));
         jLabel13.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel13.setText("© 2026 MTB. All rights reserved.");
-        jPanel8.add(jLabel13, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 20, 230, 20));
+        jPanel8.add(jLabel13, java.awt.BorderLayout.LINE_END);
+
+        termofservice2.setBackground(new java.awt.Color(34, 61, 114));
+        termofservice2.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        termofservice2.setText("Terms of Service");
+        jPanel8.add(termofservice2, java.awt.BorderLayout.PAGE_END);
 
         jPanel2.setBackground(new java.awt.Color(207, 201, 234));
         jPanel2.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -441,18 +551,22 @@ public class updatedetails extends BaseFrame {
             }
         });
 
-        lblTitle.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        lblTitle.setText("Account details");
+        lblTitle.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
+        lblTitle.setText("Account Details");
 
+        lblEmailTitle.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
         lblEmailTitle.setText("lblEmailTitle");
 
+        txtEmail.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
         txtEmail.setText("jTextField1");
+        txtEmail.setPreferredSize(new java.awt.Dimension(300, 35));
         txtEmail.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtEmailActionPerformed(evt);
             }
         });
 
+        btnChangeEmail.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
         btnChangeEmail.setText("jButton1");
         btnChangeEmail.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -460,52 +574,63 @@ public class updatedetails extends BaseFrame {
             }
         });
 
+        lblPassTitle.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         lblPassTitle.setText("lblPassTitle");
 
+        txtPassword.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
         txtPassword.setText("txtPassword");
+        txtPassword.setPreferredSize(new java.awt.Dimension(300, 35));
         txtPassword.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 txtPasswordMouseClicked(evt);
             }
         });
+        txtPassword.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtPasswordActionPerformed(evt);
+            }
+        });
 
+        btnChangePass.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
         btnChangePass.setText("jButton1");
         btnChangePass.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 btnChangePassMouseClicked(evt);
             }
         });
+        btnChangePass.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnChangePassActionPerformed(evt);
+            }
+        });
 
+        btnDeleteAccount.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
         btnDeleteAccount.setText("jButton1");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(lblTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 306, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(129, 129, 129))
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(28, 28, 28)
-                        .addComponent(lblTitle))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(38, 38, 38)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(lblPassTitle)
-                                .addGap(18, 18, 18)
-                                .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(btnChangePass))
-                            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(50, 50, 50)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(btnDeleteAccount)
+                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(lblPassTitle)
+                        .addGroup(jPanel2Layout.createSequentialGroup()
+                            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(txtPassword, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(lblEmailTitle)
-                                .addGap(18, 18, 18)
-                                .addComponent(txtEmail, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(btnChangeEmail))))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(135, 135, 135)
-                        .addComponent(btnDeleteAccount)))
-                .addContainerGap(259, Short.MAX_VALUE))
+                                .addComponent(txtEmail, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGap(36, 36, 36)
+                            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(btnChangeEmail)
+                                .addComponent(btnChangePass)))))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -513,58 +638,58 @@ public class updatedetails extends BaseFrame {
                 .addContainerGap()
                 .addComponent(lblTitle)
                 .addGap(18, 18, 18)
+                .addComponent(lblEmailTitle)
+                .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblEmailTitle)
                     .addComponent(txtEmail, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnChangeEmail))
+                .addGap(22, 22, 22)
+                .addComponent(lblPassTitle)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblPassTitle)
                     .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnChangePass))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 29, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 35, Short.MAX_VALUE)
                 .addComponent(btnDeleteAccount)
-                .addContainerGap())
+                .addGap(34, 34, 34))
         );
+
+        jPanel2Layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {btnChangeEmail, lblEmailTitle});
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(24, 24, 24)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(58, 58, 58)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
-            .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, 961, Short.MAX_VALUE)
+                .addGap(40, 40, 40)
+                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(54, 54, 54))
+            .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(48, 48, 48)
-                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(27, 27, 27)
-                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(31, 31, 31)
+                .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 976, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 583, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 583, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pack();
@@ -708,6 +833,54 @@ public class updatedetails extends BaseFrame {
     private void btnChangePassMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnChangePassMouseClicked
         // TODO add your handling code here:
     }//GEN-LAST:event_btnChangePassMouseClicked
+
+    private void btnChangePassActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnChangePassActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnChangePassActionPerformed
+
+    private void txtPasswordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtPasswordActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtPasswordActionPerformed
+
+    private void jLabel10MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel10MouseClicked
+        
+        
+        bookings bookings = new bookings();
+        bookings.setVisible(true);
+        bookings.pack();
+        bookings.setLocationRelativeTo(null);
+        this.dispose();
+    }//GEN-LAST:event_jLabel10MouseClicked
+
+    private void jLabel9MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel9MouseClicked
+        
+        
+        transaction transaction = new transaction();
+        transaction.setVisible(true);
+        transaction.pack();
+        transaction.setLocationRelativeTo(null);
+        this.dispose();
+    }//GEN-LAST:event_jLabel9MouseClicked
+
+    private void jLabel12MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel12MouseClicked
+        
+        
+        watchlist watchlist = new watchlist();
+        watchlist.setVisible(true);
+        watchlist.pack();
+        watchlist.setLocationRelativeTo(null);
+        this.dispose();
+    }//GEN-LAST:event_jLabel12MouseClicked
+
+    private void jLabel6MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel6MouseClicked
+        
+        
+        updatedetails updatedetails = new updatedetails();
+        updatedetails.setVisible(true);
+        updatedetails.pack();
+        updatedetails.setLocationRelativeTo(null);
+        this.dispose();
+    }//GEN-LAST:event_jLabel6MouseClicked
 
     /**
      * @param args the command line arguments

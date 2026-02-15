@@ -1,5 +1,6 @@
 package CRUD;
 
+import Admin.moviemanagement;
 import Admin.usermanagement;
 import javax.swing.*;
 import javax.swing.table.TableCellEditor;
@@ -29,6 +30,10 @@ public class ActionButtonEditor extends AbstractCellEditor implements TableCellE
 
         panel.add(edit);
         panel.add(delete);
+    }
+
+    public ActionButtonEditor(JTable movietable, moviemanagement aThis) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     private void editUser() {

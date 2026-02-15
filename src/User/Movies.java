@@ -42,60 +42,12 @@ public class Movies extends BaseFrame {
 
         initComponents();
 
-        jPanel5.setLayout(new java.awt.GridLayout(0, 4, 20, 20));
-        jPanel5.setBackground(new Color(207, 201, 235)); // light lavender
-
-        jPanel5.add(createMovieCard("Movie 1", "/movies/1.jpg"));
-        jPanel5.add(createMovieCard("Movie 2", "/movies/2.png"));
-        jPanel5.add(createMovieCard("Movie 3", "/movies/3.jpg"));
-        jPanel5.add(createMovieCard("Movie 4", "/movies/4.png"));
+        
         
 
     }
 
-    private JPanel createMovieCard(String title, String imagePath) {
-        JPanel card = new JPanel();
-        card.setBackground(Color.WHITE);
-        card.setLayout(new BorderLayout());
-        card.setPreferredSize(new Dimension(180, 260));
-        card.setBorder(BorderFactory.createLineBorder(new Color(213, 213, 213)));
-
-        JLabel poster = new JLabel();
-        java.net.URL imgURL = getClass().getResource(imagePath);
-
-        if (imgURL != null) {
-            poster.setIcon(new ImageIcon(imgURL));
-        } else {
-            poster.setText("No Image");
-            System.out.println("Image not found: " + imagePath);
-        }
-
-        poster.setHorizontalAlignment(SwingConstants.CENTER);
-
-        JLabel movieTitle = new JLabel(title);
-        movieTitle.setHorizontalAlignment(SwingConstants.CENTER);
-        movieTitle.setFont(new Font("Segoe UI", Font.BOLD, 16));
-        movieTitle.setForeground(new Color(158, 158, 158));
-
-        JButton buyBtn = new JButton("Buy Tickets");
-        buyBtn.setBackground(new Color(111, 106, 135));
-        buyBtn.setForeground(Color.WHITE);
-        buyBtn.setFocusPainted(false);
-
-        buyBtn.addActionListener(e -> {
-            JOptionPane.showMessageDialog(this, "Buying ticket for " + title);
-        });
-
-        JPanel bottom = new JPanel(new BorderLayout());
-        bottom.setBackground(Color.WHITE);
-        bottom.add(movieTitle, BorderLayout.NORTH);
-        bottom.add(buyBtn, BorderLayout.SOUTH);
-
-        card.add(poster, BorderLayout.CENTER);
-        card.add(bottom, BorderLayout.SOUTH);
-
-        return card;
-    }
+    
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents

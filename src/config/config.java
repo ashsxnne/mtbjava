@@ -213,4 +213,57 @@ public class config {
         }
     }
 
+      // Add new movie
+    public boolean addMovie(String name, String genre, String showtime, int seats, int runtime) {
+        String sql = "INSERT INTO tbl_movies(movie_name, genre, showtime, available_seats, run_time) VALUES(?,?,?,?,?)";
+        try (Connection con = connectDB();
+                PreparedStatement pst = con.prepareStatement(sql)) {
+
+            pst.setString(1, name);
+            pst.setString(2, genre);
+            pst.setString(3, showtime);
+            pst.setInt(4, seats);
+            pst.setInt(5, runtime);
+
+            return pst.executeUpdate() > 0; // true if insert success
+        } catch (SQLException e) {
+            System.out.println("Add movie error: " + e.getMessage());
+            return false;
+        }
+    }
+
+       // Update existing movie
+    public boolean updateMovie(int id, String name, String genre, String showtime, int seats, int runtime) {
+        String sql = "UPDATE tbl_movies SET movie_name=?, genre=?, showtime=?, available_seats=?, run_time=? WHERE m_id=?";
+        try (Connection con = connectDB();
+                PreparedStatement pst = con.prepareStatement(sql)) {
+
+            pst.setString(1, name);
+            pst.setString(2, genre);
+            pst.setString(3, showtime);
+            pst.setInt(4, seats);
+            pst.setInt(5, runtime);
+            pst.setInt(6, id);
+
+            return pst.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Update movie error: " + e.getMessage());
+            return false;
+        }
+    }
+
+       // Delete movie
+    public boolean deleteMovie(int id) {
+        String sql = "DELETE FROM tbl_movies WHERE m_id=?";
+        try (Connection con = connectDB();
+                PreparedStatement pst = con.prepareStatement(sql)) {
+
+            pst.setInt(1, id);
+            return pst.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Delete movie error: " + e.getMessage());
+            return false;
+        }
+    }
+
 }
