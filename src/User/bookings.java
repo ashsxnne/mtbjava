@@ -52,49 +52,66 @@ public class bookings extends BaseFrame {
 
         styleTable();
 
-        styleTable();
-
-// Set model FIRST
-        bookedtable.setModel(new javax.swing.table.DefaultTableModel(
+        bookedtable.setModel(new DefaultTableModel(
                 new Object[][]{},
                 new String[]{
-                    "Movie Name", "Show Time", "Quantity", "Seat No", "Actions"
+                    "BookingID", "Movie Name", "Show Time", "Quantity",
+                    "Seat No", "Canceled", "Actions"
                 }
         ) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return false;
+                return column == 6; // only Actions column editable
             }
         });
 
-// THEN set renderer/editor
+        bookedtable.setRowSelectionAllowed(true);
+        bookedtable.setColumnSelectionAllowed(false);
+        bookedtable.setCellSelectionEnabled(false);
+        bookedtable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+
+        // THEN set renderer/editor
+        bookedtable.getColumnModel().getColumn(0).setMinWidth(0);
+        bookedtable.getColumnModel().getColumn(0).setMaxWidth(0);
+
+        bookedtable.getColumnModel().getColumn(5).setMinWidth(0);
+        bookedtable.getColumnModel().getColumn(5).setMaxWidth(0);
+
+        // Set fixed width for Actions column
+        bookedtable.getColumn("Actions").setPreferredWidth(180);
+        bookedtable.getColumn("Actions").setMinWidth(180);
+        bookedtable.getColumn("Actions").setMaxWidth(180);
+
         bookedtable.getColumn("Actions").setCellRenderer(new ActionRenderer());
         bookedtable.getColumn("Actions").setCellEditor(new ActionEditor(bookedtable));
 
         loadBookings();
     }
 
-    class ActionRenderer extends javax.swing.JPanel implements javax.swing.table.TableCellRenderer {
+    class ActionRenderer extends javax.swing.JPanel
+            implements javax.swing.table.TableCellRenderer {
 
-        private final javax.swing.JButton viewBtn = new javax.swing.JButton("View");
         private final javax.swing.JButton cancelBtn = new javax.swing.JButton("Cancel");
-        private final javax.swing.JButton printBtn = new javax.swing.JButton("Print");
+        private final javax.swing.JButton watchedBtn = new javax.swing.JButton("Watched");
 
         public ActionRenderer() {
-            setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 5, 5));
 
-            viewBtn.setBackground(new java.awt.Color(102, 0, 204));
-            viewBtn.setForeground(java.awt.Color.WHITE);
+            setLayout(new java.awt.FlowLayout(
+                    java.awt.FlowLayout.CENTER, 5, 5));
+
+            setBackground(new java.awt.Color(245, 242, 255));
+
+            cancelBtn.setFocusable(false);
+            watchedBtn.setFocusable(false);
 
             cancelBtn.setBackground(new java.awt.Color(220, 53, 69));
             cancelBtn.setForeground(java.awt.Color.WHITE);
 
-            printBtn.setBackground(new java.awt.Color(40, 167, 69));
-            printBtn.setForeground(java.awt.Color.WHITE);
+            watchedBtn.setBackground(new java.awt.Color(40, 167, 69));
+            watchedBtn.setForeground(java.awt.Color.WHITE);
 
-            add(viewBtn);
             add(cancelBtn);
-            add(printBtn);
+            add(watchedBtn);
         }
 
         @Override
@@ -102,6 +119,13 @@ public class bookings extends BaseFrame {
                 javax.swing.JTable table, Object value,
                 boolean isSelected, boolean hasFocus,
                 int row, int column) {
+
+            if (isSelected) {
+                setBackground(table.getSelectionBackground());
+            } else {
+                setBackground(new java.awt.Color(245, 242, 255));
+            }
+
             return this;
         }
     }
@@ -110,44 +134,57 @@ public class bookings extends BaseFrame {
             implements javax.swing.table.TableCellEditor {
 
         private final javax.swing.JPanel panel = new javax.swing.JPanel();
-        private final javax.swing.JButton viewBtn = new javax.swing.JButton("View");
         private final javax.swing.JButton cancelBtn = new javax.swing.JButton("Cancel");
-        private final javax.swing.JButton printBtn = new javax.swing.JButton("Print");
+        private final javax.swing.JButton watchedBtn = new javax.swing.JButton("Watched");
 
         private int selectedRow;
+        private javax.swing.JTable table;
 
         public ActionEditor(javax.swing.JTable table) {
 
-            panel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 5, 5));
+            this.table = table;
 
-            viewBtn.setBackground(new java.awt.Color(102, 0, 204));
-            viewBtn.setForeground(java.awt.Color.WHITE);
+            panel.setLayout(new java.awt.FlowLayout(
+                    java.awt.FlowLayout.CENTER, 5, 5));
+
+            panel.setBackground(new java.awt.Color(245, 242, 255));
+
+            cancelBtn.setFocusable(false);
+            watchedBtn.setFocusable(false);
 
             cancelBtn.setBackground(new java.awt.Color(220, 53, 69));
             cancelBtn.setForeground(java.awt.Color.WHITE);
 
-            printBtn.setBackground(new java.awt.Color(40, 167, 69));
-            printBtn.setForeground(java.awt.Color.WHITE);
+            watchedBtn.setBackground(new java.awt.Color(40, 167, 69));
+            watchedBtn.setForeground(java.awt.Color.WHITE);
 
-            panel.add(viewBtn);
             panel.add(cancelBtn);
-            panel.add(printBtn);
+            panel.add(watchedBtn);
 
-            // View
-            viewBtn.addActionListener(e -> {
-                JOptionPane.showMessageDialog(null, "View row " + selectedRow);
-                fireEditingStopped();
-            });
-
-            // Cancel
+            // CANCEL
             cancelBtn.addActionListener(e -> {
-                JOptionPane.showMessageDialog(null, "Cancel row " + selectedRow);
+                int bookingId = (int) table.getValueAt(selectedRow, 0);
+
+                int confirm = JOptionPane.showConfirmDialog(
+                        null,
+                        "Cancel this booking?",
+                        "Confirm",
+                        JOptionPane.YES_NO_OPTION
+                );
+
+                if (confirm == JOptionPane.YES_OPTION) {
+                    updateBookingStatus(bookingId, 1, 0);
+                    loadBookings();
+                }
+
                 fireEditingStopped();
             });
 
-            // Print
-            printBtn.addActionListener(e -> {
-                JOptionPane.showMessageDialog(null, "Print row " + selectedRow);
+            // WATCHED
+            watchedBtn.addActionListener(e -> {
+                int bookingId = (int) table.getValueAt(selectedRow, 0);
+                updateBookingStatus(bookingId, 0, 1);
+                loadBookings();
                 fireEditingStopped();
             });
         }
@@ -172,7 +209,8 @@ public class bookings extends BaseFrame {
         try {
             Connection con = DriverManager.getConnection("jdbc:sqlite:mtb.db");
 
-            String sql = "SELECT m.movie_name, m.showtime, b.quantity, b.seat_no "
+            String sql = "SELECT b.b_id, m.movie_name, m.showtime, "
+                    + "b.quantity, b.seat_no, b.canceled "
                     + "FROM tbl_booking b "
                     + "JOIN tbl_movies m ON b.m_id = m.m_id "
                     + "JOIN tbl_user u ON b.u_id = u.u_id "
@@ -190,10 +228,12 @@ public class bookings extends BaseFrame {
 
             while (rs.next()) {
                 model.addRow(new Object[]{
+                    rs.getInt("b_id"),
                     rs.getString("movie_name"),
                     rs.getString("showtime"),
                     rs.getInt("quantity"),
                     rs.getString("seat_no"),
+                    rs.getInt("canceled"),
                     "Actions"
                 });
             }
@@ -253,6 +293,31 @@ public class bookings extends BaseFrame {
         label.setIcon(new javax.swing.ImageIcon(getClass().getResource(path)));
         label.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
         label.setIconTextGap(10);
+    }
+
+    private void updateBookingStatus(int bookingId, int canceled, int watched) {
+
+        try {
+            Connection con = DriverManager.getConnection("jdbc:sqlite:mtb.db");
+
+            String sql = "UPDATE tbl_booking SET canceled = ?, watched = ? WHERE b_id = ?";
+
+            PreparedStatement pst = con.prepareStatement(sql);
+            pst.setInt(1, canceled);
+            pst.setInt(2, watched);
+            pst.setInt(3, bookingId);
+
+            pst.executeUpdate();
+
+            pst.close();
+            con.close();
+
+            JOptionPane.showMessageDialog(this, "Booking updated!");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Error updating booking.");
+        }
     }
 
     @SuppressWarnings("unchecked")
