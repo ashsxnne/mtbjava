@@ -10,11 +10,14 @@ import design.BaseFrame;
 import Main.landingpage;
 import config.Session;
 import config.config;
+import java.awt.Color;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
 /**
  *
@@ -22,9 +25,6 @@ import javax.swing.JOptionPane;
  */
 public class Profile extends BaseFrame {
 
-    /**
-     * Creates new form Profile
-     */
     public Profile() {
 
         // Check session first
@@ -35,6 +35,28 @@ public class Profile extends BaseFrame {
             return;   // stop constructor
         }
         initComponents();
+
+        setupCard(cardUserBookings, "BOOKINGS", "🎟", userBookingsCount, new java.awt.Color(66, 133, 244));
+        setupCard(cardUserWatchlist, "WATCHLIST", "🎬", userWatchlistCount, new java.awt.Color(255, 167, 38));
+        setupCard(cardUserTransactions, "TRANSACTIONS", "💳", userTransactionsCount, new java.awt.Color(156, 39, 176));
+
+        applyThemeToCards();
+        loadUserStats();
+
+        setMenuIcon(jLabel8, "/imagesicons/over.png");       // Overview
+        setMenuIcon(jLabel6, "/imagesicons/update.png");     // Update details
+        setMenuIcon(jLabel10, "/imagesicons/booking.png");   // Bookings
+        setMenuIcon(jLabel9, "/imagesicons/trans.png");      // Transactions
+        setMenuIcon(jLabel12, "/imagesicons/watch.png");     // Watch lists
+        setMenuIcon(jLabel11, "/imagesicons/log.png");    // Log out
+
+        addHoverEffect(jLabel8);
+        addHoverEffect(jLabel6);
+        addHoverEffect(jLabel10);
+        addHoverEffect(jLabel9);
+        addHoverEffect(jLabel12);
+        addHoverEffect(jLabel11);
+
         System.out.println("SESSION EMAIL = " + Session.userEmail);
         showUserName();
     }
@@ -92,6 +114,141 @@ public class Profile extends BaseFrame {
         }
     }
 
+    private void setMenuIcon(javax.swing.JLabel label, String path) {
+        label.setIcon(new javax.swing.ImageIcon(getClass().getResource(path)));
+        label.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+        label.setIconTextGap(10);
+    }
+
+    private void addHoverEffect(javax.swing.JLabel label) {
+        label.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+
+        label.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                label.setForeground(new java.awt.Color(102, 0, 204)); // purple hover
+            }
+
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                label.setForeground(java.awt.Color.BLACK);
+            }
+        });
+    }
+
+    private void applyThemeToCards() {
+
+        jPanel4.setBackground(new Color(207, 201, 235));
+
+        styleCard(cardUserBookings, new java.awt.Color(66, 133, 244));   // Blue
+        styleCard(cardUserWatchlist, new java.awt.Color(255, 167, 38));  // Orange
+        styleCard(cardUserTransactions, new java.awt.Color(156, 39, 176)); // Purple
+
+    }
+
+    private void styleCard(JPanel card, java.awt.Color accentColor) {
+
+        card.setBackground(Color.WHITE);
+        card.setBorder(javax.swing.BorderFactory.createLineBorder(accentColor, 2));
+
+        // Adjusted size to fit 961x578 frame perfectly
+        card.setPreferredSize(new java.awt.Dimension(210, 140));
+        card.setMinimumSize(new java.awt.Dimension(210, 140));
+        card.setMaximumSize(new java.awt.Dimension(210, 140));
+    }
+
+    private void setupCard(
+            JPanel card,
+            String title,
+            String iconText,
+            JLabel countLabel,
+            java.awt.Color accent
+    ) {
+        card.removeAll();
+        card.setLayout(null);
+        card.setBackground(Color.WHITE);
+        card.setBorder(javax.swing.BorderFactory.createLineBorder(accent, 2));
+
+        // Icon
+        JLabel icon = new JLabel(iconText);
+        icon.setFont(new java.awt.Font("Segoe UI Emoji", java.awt.Font.PLAIN, 20));
+        icon.setBounds(15, 10, 40, 30);
+        icon.setForeground(accent);
+
+        // Title
+        JLabel titleLabel = new JLabel(title);
+        titleLabel.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 12));
+        titleLabel.setForeground(new java.awt.Color(120, 120, 120));
+        titleLabel.setBounds(15, 40, 200, 20);
+
+        // Big Number
+        countLabel.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 28));
+        countLabel.setForeground(accent);
+        countLabel.setBounds(15, 65, 180, 35);
+
+
+        card.add(icon);
+        card.add(titleLabel);
+        card.add(countLabel);
+
+        card.repaint();
+    }
+
+    private void loadUserStats() {
+
+        try (Connection conn = config.connectDB()) {
+
+            String email = Session.userEmail;
+
+            // Get user ID first
+            String userSQL = "SELECT u_id FROM tbl_user WHERE u_email = ?";
+            PreparedStatement psUser = conn.prepareStatement(userSQL);
+            psUser.setString(1, email);
+            ResultSet rsUser = psUser.executeQuery();
+
+            if (rsUser.next()) {
+
+                int userId = rsUser.getInt("u_id");
+
+                // 1️⃣ Bookings count
+                String bookingSQL = "SELECT COUNT(*) FROM tbl_booking WHERE u_id = ?";
+                PreparedStatement psBooking = conn.prepareStatement(bookingSQL);
+                psBooking.setInt(1, userId);
+                ResultSet rsBooking = psBooking.executeQuery();
+                if (rsBooking.next()) {
+                    userBookingsCount.setText(String.valueOf(rsBooking.getInt(1)));
+                }
+
+                // 2️⃣ Watchlist count
+                String watchSQL = "SELECT COUNT(*) FROM tbl_watchlist WHERE u_id = ?";
+                PreparedStatement psWatch = conn.prepareStatement(watchSQL);
+                psWatch.setInt(1, userId);
+                ResultSet rsWatch = psWatch.executeQuery();
+                if (rsWatch.next()) {
+                    userWatchlistCount.setText(String.valueOf(rsWatch.getInt(1)));
+                }
+
+                // 3️⃣ Transactions count
+                // 3️⃣ Transactions count
+                String transSQL
+                        = "SELECT COUNT(*) "
+                        + "FROM tbl_transaction t "
+                        + "JOIN tbl_booking b ON t.b_id = b.b_id "
+                        + "WHERE b.u_id = ?";
+
+                PreparedStatement psTrans = conn.prepareStatement(transSQL);
+                psTrans.setInt(1, userId);
+                ResultSet rsTrans = psTrans.executeQuery();
+
+                if (rsTrans.next()) {
+                    userTransactionsCount.setText(String.valueOf(rsTrans.getInt(1)));
+                }
+
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -127,6 +284,12 @@ public class Profile extends BaseFrame {
         privacy2 = new javax.swing.JLabel();
         termofservice2 = new javax.swing.JLabel();
         jLabel13 = new javax.swing.JLabel();
+        cardUserBookings = new javax.swing.JPanel();
+        userBookingsCount = new javax.swing.JLabel();
+        cardUserWatchlist = new javax.swing.JPanel();
+        userWatchlistCount = new javax.swing.JLabel();
+        cardUserTransactions = new javax.swing.JPanel();
+        userTransactionsCount = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -142,7 +305,7 @@ public class Profile extends BaseFrame {
         jPanel6.setBackground(new java.awt.Color(255, 255, 255));
 
         jLabel6.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
-        jLabel6.setText("Update details");
+        jLabel6.setText("Update Details");
         jLabel6.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jLabel6MouseClicked(evt);
@@ -180,18 +343,21 @@ public class Profile extends BaseFrame {
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel6Layout.createSequentialGroup()
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel6Layout.createSequentialGroup()
                         .addGap(38, 38, 38)
                         .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(jPanel6Layout.createSequentialGroup()
-                        .addGap(83, 83, 83)
-                        .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(49, Short.MAX_VALUE))
+                            .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(jPanel6Layout.createSequentialGroup()
+                                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(0, 37, Short.MAX_VALUE)))))
+                .addContainerGap())
         );
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -206,9 +372,9 @@ public class Profile extends BaseFrame {
                 .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel12, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(39, 39, 39)
+                .addGap(37, 37, 37)
                 .addComponent(jLabel11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(30, 30, 30))
+                .addGap(32, 32, 32))
         );
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
@@ -330,6 +496,7 @@ public class Profile extends BaseFrame {
         jPanel5.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(660, 30, -1, -1));
 
         jPanel8.setBackground(new java.awt.Color(207, 201, 234));
+        jPanel8.setPreferredSize(new java.awt.Dimension(961, 578));
         jPanel8.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         contactus2.setBackground(new java.awt.Color(34, 61, 114));
@@ -352,6 +519,63 @@ public class Profile extends BaseFrame {
         jLabel13.setText("© 2026 MTB. All rights reserved.");
         jPanel8.add(jLabel13, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 20, 230, 20));
 
+        userBookingsCount.setText("jLabel16");
+
+        javax.swing.GroupLayout cardUserBookingsLayout = new javax.swing.GroupLayout(cardUserBookings);
+        cardUserBookings.setLayout(cardUserBookingsLayout);
+        cardUserBookingsLayout.setHorizontalGroup(
+            cardUserBookingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, cardUserBookingsLayout.createSequentialGroup()
+                .addContainerGap(56, Short.MAX_VALUE)
+                .addComponent(userBookingsCount)
+                .addGap(54, 54, 54))
+        );
+        cardUserBookingsLayout.setVerticalGroup(
+            cardUserBookingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(cardUserBookingsLayout.createSequentialGroup()
+                .addGap(72, 72, 72)
+                .addComponent(userBookingsCount)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        userWatchlistCount.setText("jLabel17");
+
+        javax.swing.GroupLayout cardUserWatchlistLayout = new javax.swing.GroupLayout(cardUserWatchlist);
+        cardUserWatchlist.setLayout(cardUserWatchlistLayout);
+        cardUserWatchlistLayout.setHorizontalGroup(
+            cardUserWatchlistLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, cardUserWatchlistLayout.createSequentialGroup()
+                .addContainerGap(58, Short.MAX_VALUE)
+                .addComponent(userWatchlistCount)
+                .addGap(52, 52, 52))
+        );
+        cardUserWatchlistLayout.setVerticalGroup(
+            cardUserWatchlistLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(cardUserWatchlistLayout.createSequentialGroup()
+                .addGap(77, 77, 77)
+                .addComponent(userWatchlistCount)
+                .addContainerGap(144, Short.MAX_VALUE))
+        );
+
+        userTransactionsCount.setText("jLabel18");
+
+        javax.swing.GroupLayout cardUserTransactionsLayout = new javax.swing.GroupLayout(cardUserTransactions);
+        cardUserTransactions.setLayout(cardUserTransactionsLayout);
+        cardUserTransactionsLayout.setHorizontalGroup(
+            cardUserTransactionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(cardUserTransactionsLayout.createSequentialGroup()
+                .addGap(50, 50, 50)
+                .addComponent(userTransactionsCount)
+                .addContainerGap(60, Short.MAX_VALUE))
+        );
+        cardUserTransactionsLayout.setVerticalGroup(
+            cardUserTransactionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(cardUserTransactionsLayout.createSequentialGroup()
+                .addGap(76, 76, 76)
+                .addComponent(userTransactionsCount)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -360,9 +584,16 @@ public class Profile extends BaseFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(37, 37, 37)
-                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(cardUserBookings, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(cardUserWatchlist, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(cardUserTransactions, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, 961, Short.MAX_VALUE)
+            .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, 920, Short.MAX_VALUE)
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -372,9 +603,14 @@ public class Profile extends BaseFrame {
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGap(18, 18, 18)
                         .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(19, 19, 19)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(cardUserBookings, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(cardUserWatchlist, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(cardUserTransactions, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 47, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 9, Short.MAX_VALUE)
                         .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)))
                 .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -384,22 +620,22 @@ public class Profile extends BaseFrame {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 952, Short.MAX_VALUE)
+            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 920, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 550, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 952, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 920, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 550, Short.MAX_VALUE)
         );
 
         pack();
@@ -494,6 +730,9 @@ public class Profile extends BaseFrame {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel cardUserBookings;
+    private javax.swing.JPanel cardUserTransactions;
+    private javax.swing.JPanel cardUserWatchlist;
     private javax.swing.JLabel contactus2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
@@ -520,5 +759,8 @@ public class Profile extends BaseFrame {
     private javax.swing.JPanel jPanel8;
     private javax.swing.JLabel privacy2;
     private javax.swing.JLabel termofservice2;
+    private javax.swing.JLabel userBookingsCount;
+    private javax.swing.JLabel userTransactionsCount;
+    private javax.swing.JLabel userWatchlistCount;
     // End of variables declaration//GEN-END:variables
 }
