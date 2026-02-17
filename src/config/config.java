@@ -1,5 +1,8 @@
 package config;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.*;
 import net.proteanit.sql.DbUtils;
 
@@ -213,9 +216,21 @@ public class config {
         }
     }
 
-      // Add new movie
-    public boolean addMovie(String name, String genre, String showtime, int seats, int runtime) {
-        String sql = "INSERT INTO tbl_movies(movie_name, genre, showtime, available_seats, run_time) VALUES(?,?,?,?,?)";
+    // Add new movie
+    public boolean addMovie(String name,
+            String genre,
+            String showtime,
+            int seats,
+            String runtime,
+            String rated,
+            String status,
+            String posterName,
+            String description) {
+
+        String sql = "INSERT INTO tbl_movies "
+                + "(movie_name, genre, show_time, available_seats, run_time, rated, status, poster, description) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
         try (Connection con = connectDB();
                 PreparedStatement pst = con.prepareStatement(sql)) {
 
@@ -223,18 +238,69 @@ public class config {
             pst.setString(2, genre);
             pst.setString(3, showtime);
             pst.setInt(4, seats);
-            pst.setInt(5, runtime);
+            pst.setString(5, runtime);
+            pst.setString(6, rated);
+            pst.setString(7, status);
+            pst.setString(9, description);
 
-            return pst.executeUpdate() > 0; // true if insert success
-        } catch (SQLException e) {
-            System.out.println("Add movie error: " + e.getMessage());
+            InputStream input = config.class.getResourceAsStream("/movies/" + posterName);
+
+            if (input != null) {
+                byte[] imgBytes = toByteArray(input);
+
+                pst.setBytes(8, imgBytes);
+            } else {
+                pst.setNull(8, java.sql.Types.BLOB);
+            }
+
+            pst.executeUpdate();
+            return true;
+
+        } catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
     }
 
-       // Update existing movie
-    public boolean updateMovie(int id, String name, String genre, String showtime, int seats, int runtime) {
-        String sql = "UPDATE tbl_movies SET movie_name=?, genre=?, showtime=?, available_seats=?, run_time=? WHERE m_id=?";
+// Helper method - keep this one ONLY once in the class
+    private byte[] toByteArray(InputStream is) throws IOException {
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        int nRead;
+        byte[] data = new byte[16384]; // 16 KB buffer
+
+        while ((nRead = is.read(data, 0, data.length)) != -1) {
+            buffer.write(data, 0, nRead);
+        }
+
+        buffer.flush();
+        return buffer.toByteArray();
+    }
+
+    // Update existing movie
+    public boolean updateMovie(
+            int id,
+            String name,
+            String genre,
+            String showtime,
+            int seats,
+            String runtime, // change here to String
+            String rated,
+            String status,
+            String posterName,
+            String description) {
+
+        String sql = "UPDATE tbl_movies SET "
+                + "movie_name = ?, "
+                + "genre = ?, "
+                + "show_time = ?, "
+                + "available_seats = ?, "
+                + "run_time = ?, "
+                + "rated = ?, "
+                + "status = ?, "
+                + "poster = ?, "
+                + "description = ? "
+                + "WHERE m_id = ?";
+
         try (Connection con = connectDB();
                 PreparedStatement pst = con.prepareStatement(sql)) {
 
@@ -242,17 +308,32 @@ public class config {
             pst.setString(2, genre);
             pst.setString(3, showtime);
             pst.setInt(4, seats);
-            pst.setInt(5, runtime);
-            pst.setInt(6, id);
+            pst.setString(5, runtime);  // <-- set as string here
+            pst.setString(6, rated);
+            pst.setString(7, status);
+
+            java.io.InputStream is = config.class.getResourceAsStream("/movies/" + posterName);
+
+            if (is != null) {
+                byte[] imgBytes = toByteArray(is);
+                pst.setBytes(8, imgBytes);
+            } else {
+                pst.setNull(8, java.sql.Types.BLOB);
+            }
+
+            pst.setString(9, description);
+            pst.setInt(10, id);
 
             return pst.executeUpdate() > 0;
-        } catch (SQLException e) {
+
+        } catch (SQLException | IOException e) {
             System.out.println("Update movie error: " + e.getMessage());
             return false;
         }
+
     }
 
-       // Delete movie
+    // Delete movie
     public boolean deleteMovie(int id) {
         String sql = "DELETE FROM tbl_movies WHERE m_id=?";
         try (Connection con = connectDB();

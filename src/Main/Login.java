@@ -6,12 +6,17 @@
 package Main;
 
 import Admin.AdminDashboard;
+import Staff.StaffDash;
+import config.Session;
+import config.config;
+import design.BaseFrame;
+import javax.swing.JOptionPane;
 
 /**
  *
  * @author ph2tn
  */
-public class Login extends javax.swing.JFrame {
+public class Login extends BaseFrame {
 
     /**
      * Creates new form Login1
@@ -173,12 +178,48 @@ public class Login extends javax.swing.JFrame {
     }//GEN-LAST:event_jLabel6MouseClicked
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        
-        AdminDashboard AdminDashboard = new AdminDashboard();   
-            AdminDashboard.setVisible(true);
-            AdminDashboard.pack();
-            AdminDashboard.setLocationRelativeTo(null);
+
+        String email = blank.getText().trim();
+        String password = new String(jPasswordField1.getPassword());
+
+        if (email.isEmpty() || password.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please fill in all fields.");
+            return;
+        }
+
+        config cfg = new config();
+        config.LoginResult result = cfg.loginUserDetailed(email, password);
+
+        if (result == null) {
+            JOptionPane.showMessageDialog(this, "Invalid email or password!");
+            return;
+        }
+
+        // Optionally check account status
+        if (result.status != 1) { // assuming 1 = active
+            JOptionPane.showMessageDialog(this, "Your account is inactive!");
+            return;
+        }
+
+        // Set session
+        Session.userEmail = result.email;
+
+        // Open dashboard based on user type
+        if (result.userType.equalsIgnoreCase("Admin")) {
+            AdminDashboard admin = new AdminDashboard();
+            admin.setVisible(true);
+            admin.pack();
+            admin.setLocationRelativeTo(null);
             this.dispose();
+
+        } else if (result.userType.equalsIgnoreCase("Staff")) {
+            StaffDash staff = new StaffDash();
+            staff.startStaffSession();  // Staff workflow
+            this.dispose();
+
+        } else {
+            JOptionPane.showMessageDialog(this, "Unknown user type!");
+        }
 
     }//GEN-LAST:event_jButton1ActionPerformed
 

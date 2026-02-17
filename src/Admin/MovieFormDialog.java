@@ -1,7 +1,5 @@
 package Admin;
 
-
-
 import javax.swing.*;
 import java.awt.*;
 
@@ -12,15 +10,26 @@ public class MovieFormDialog extends JDialog {
     private JTextField txtShowtime = new JTextField(20);
     private JTextField txtSeats = new JTextField(20);
     private JTextField txtRuntime = new JTextField(20);
+    private JTextField txtPoster = new JTextField(20);
+
+    private JComboBox<String> cmbRated = new JComboBox<>(
+            new String[]{"G", "PG", "PG-13", "R"}
+    );
+
+    private JComboBox<String> cmbStatus = new JComboBox<>(
+            new String[]{"NOW SHOWING", "UPCOMING", "Ended"}
+    );
+
+    private JTextArea txtDescription = new JTextArea(3, 20);
 
     private boolean confirmed = false;
 
     public MovieFormDialog(JFrame parent, String title) {
-        super(parent, title, true); // modal dialog
+        super(parent, title, true);
 
         setLayout(new BorderLayout(10, 10));
 
-        JPanel formPanel = new JPanel(new GridLayout(5, 2, 10, 10));
+        JPanel formPanel = new JPanel(new GridLayout(9, 2, 10, 10));
 
         formPanel.add(new JLabel("Movie Name:"));
         formPanel.add(txtName);
@@ -36,6 +45,18 @@ public class MovieFormDialog extends JDialog {
 
         formPanel.add(new JLabel("Run Time (minutes):"));
         formPanel.add(txtRuntime);
+
+        formPanel.add(new JLabel("Rated:"));
+        formPanel.add(cmbRated);
+
+        formPanel.add(new JLabel("Status:"));
+        formPanel.add(cmbStatus);
+
+        formPanel.add(new JLabel("Poster Name (ex: 1.jpg):"));
+        formPanel.add(txtPoster);
+
+        formPanel.add(new JLabel("Description:"));
+        formPanel.add(new JScrollPane(txtDescription));
 
         JPanel buttonPanel = new JPanel();
 
@@ -66,20 +87,21 @@ public class MovieFormDialog extends JDialog {
                 || txtGenre.getText().trim().isEmpty()
                 || txtShowtime.getText().trim().isEmpty()
                 || txtSeats.getText().trim().isEmpty()
-                || txtRuntime.getText().trim().isEmpty()) {
+                || txtRuntime.getText().trim().isEmpty()
+                || txtPoster.getText().trim().isEmpty()) {
 
             JOptionPane.showMessageDialog(this, "All fields are required.");
             return false;
         }
 
         try {
-            Integer.parseInt(txtSeats.getText());
-            Integer.parseInt(txtRuntime.getText());
+            Integer.parseInt(txtSeats.getText());  // Only check seats as number
         } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Seats and Runtime must be numbers.");
+            JOptionPane.showMessageDialog(this, "Seats must be a number.");
             return false;
         }
 
+        // No integer check for runtime because it's a free-form string
         return true;
     }
 
@@ -103,16 +125,50 @@ public class MovieFormDialog extends JDialog {
         return Integer.parseInt(txtSeats.getText().trim());
     }
 
-    public int getRuntime() {
-        return Integer.parseInt(txtRuntime.getText().trim());
+    public String getRuntime() {
+        return txtRuntime.getText().trim();
+    }
+
+    public String getRated() {
+        return cmbRated.getSelectedItem().toString();
+    }
+
+    public String getStatus() {
+        return cmbStatus.getSelectedItem().toString();
+    }
+
+    public String getPosterName() {
+        return txtPoster.getText().trim();
+    }
+
+    public String getDescription() {
+        return txtDescription.getText().trim();
+    }
+
+    public void setRated(String rated) {
+        cmbRated.setSelectedItem(rated);
+    }
+
+    public void setStatus(String status) {
+        cmbStatus.setSelectedItem(status);
+    }
+
+    public void setPosterName(String posterName) {
+        txtPoster.setText(posterName);
+    }
+
+    public void setDescription(String description) {
+        txtDescription.setText(description);
     }
 
     // Used for update
-    public void setValues(String name, String genre, String showtime, int seats, int runtime) {
+    public void setValues(String name, String genre, String showtime,
+            int seats, String run_time) {
+
         txtName.setText(name);
         txtGenre.setText(genre);
         txtShowtime.setText(showtime);
         txtSeats.setText(String.valueOf(seats));
-        txtRuntime.setText(String.valueOf(runtime));
+        txtRuntime.setText(run_time);
     }
 }

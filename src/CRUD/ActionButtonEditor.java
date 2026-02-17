@@ -38,27 +38,47 @@ public class ActionButtonEditor extends AbstractCellEditor implements TableCellE
 
     private void editUser() {
 
-    int row = table.getSelectedRow();
+        if (table.isEditing()) {
+            table.getCellEditor().stopCellEditing();
+        }
 
-    int id = (int) table.getValueAt(row, 0);
-    String name = table.getValueAt(row, 1).toString();
-    String email = table.getValueAt(row, 2).toString();
-    String type = table.getValueAt(row, 4).toString();
-    int status = Integer.parseInt(table.getValueAt(row, 5).toString());
+        int viewRow = table.getSelectedRow();
+        if (viewRow < 0) {
+            return;
+        }
 
-    usermanagement parent =
-            (usermanagement) SwingUtilities.getWindowAncestor(table);
+        int row = table.convertRowIndexToModel(viewRow);
 
-    new EditUserDialog(parent, id, name, email, type, status)
-            .setVisible(true);
+        int id = (int) table.getModel().getValueAt(row, 0);
+        String name = table.getModel().getValueAt(row, 1).toString();
+        String email = table.getModel().getValueAt(row, 2).toString();
+        String type = table.getModel().getValueAt(row, 4).toString();
+        int status = Integer.parseInt(
+                table.getModel().getValueAt(row, 5).toString()
+        );
 
-    fireEditingStopped();
-}
+        usermanagement parent
+                = (usermanagement) SwingUtilities.getWindowAncestor(table);
 
+        new EditUserDialog(parent, id, name, email, type, status)
+                .setVisible(true);
+    }
 
     private void deleteUser() {
-        int row = table.getSelectedRow();
-        int userId = (int) table.getValueAt(row, 0);
+
+        // ✅ STOP EDITING FIRST (VERY IMPORTANT)
+        if (table.isEditing()) {
+            table.getCellEditor().stopCellEditing();
+        }
+
+        int viewRow = table.getSelectedRow();
+        if (viewRow < 0) {
+            return;
+        }
+
+        int row = table.convertRowIndexToModel(viewRow);
+
+        int userId = (int) table.getModel().getValueAt(row, 0);
 
         int confirm = JOptionPane.showConfirmDialog(
                 table,
@@ -68,20 +88,20 @@ public class ActionButtonEditor extends AbstractCellEditor implements TableCellE
         );
 
         if (confirm == JOptionPane.YES_OPTION) {
+
             deleteFromDB(userId);
+
             ((usermanagement) SwingUtilities
                     .getWindowAncestor(table))
                     .loadUsers();
         }
-
-        fireEditingStopped();
     }
 
     private void deleteFromDB(int id) {
         String sql = "DELETE FROM tbl_user WHERE u_id=?";
 
         try (Connection con = DriverManager.getConnection("jdbc:sqlite:mtb.db");
-             PreparedStatement ps = con.prepareStatement(sql)) {
+                PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setInt(1, id);
             ps.executeUpdate();

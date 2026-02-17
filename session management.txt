@@ -1,0 +1,30 @@
+// Check session first
+    if (!Session.isLoggedIn()) {
+        JOptionPane.showMessageDialog(null, "You need to login first.");
+        new Login().setVisible(true); // send user to login
+        dispose(); // close this frame
+        return;   // stop constructor
+    }
+
+init componentns bla2
+
+
+public static void main(String args[]) {
+        java.awt.EventQueue.invokeLater(() -> {
+            if (!Session.isLoggedIn()) {
+                JOptionPane.showMessageDialog(null, "You need to login first.");
+                new Login().setVisible(true);
+            } else {
+                new Profile().setVisible(true);
+            }
+        });
+    }
+
+for image ni not session for BLOB adding movie picture
+
+byte[] imgBytes = rs.getBytes("poster");
+
+if (imgBytes != null) {
+    ImageIcon icon = new ImageIcon(imgBytes);
+    posterLabel.setIcon(icon);
+}

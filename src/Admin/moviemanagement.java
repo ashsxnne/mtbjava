@@ -6,13 +6,8 @@
 package Admin;
 
 import KiosksPages.HomeK;
-import Main.Login;
-import User.Profile;
-import config.Session;
 import config.config;
-import design.BaseFrame;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Font;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -21,10 +16,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
 import javax.swing.JTable;
-import javax.swing.JTextField;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
@@ -32,20 +24,11 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author ph2tn
  */
-public class moviemanagement extends BaseFrame {
+public class moviemanagement extends javax.swing.JFrame {
 
     private config db = new config(); // make db available to all methods
 
     public moviemanagement() {
-
-        // Check session first
-        if (!Session.isLoggedIn()) {
-            JOptionPane.showMessageDialog(null, "You need to login first.");
-            new Login().setVisible(true); // send user to login
-            dispose(); // close this frame
-            return;   // stop constructor
-        }
-
         initComponents();
 
         jTextField1.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
@@ -130,63 +113,6 @@ public class moviemanagement extends BaseFrame {
                 javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10)
         ));
 
-        // Key listener for searching users
-        jTextField1.addKeyListener(new java.awt.event.KeyAdapter() {
-            @Override
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                String search = jTextField1.getText().trim();
-                filterMovies(search);
-            }
-        });
-
-    }
-
-    private boolean confirmAdminPassword() {
-
-        JPanel panel = new JPanel();
-        JLabel label = new JLabel("Enter Your Password:");
-        JPasswordField passField = new JPasswordField(15);
-
-        panel.add(label);
-        panel.add(passField);
-
-        int option = JOptionPane.showConfirmDialog(
-                this,
-                panel,
-                "Admin Verification",
-                JOptionPane.OK_CANCEL_OPTION,
-                JOptionPane.PLAIN_MESSAGE
-        );
-
-        if (option == JOptionPane.OK_OPTION) {
-
-            String enteredPassword = new String(passField.getPassword());
-            String loggedInEmail = Session.getEmail();
-
-            String sql = "SELECT * FROM tbl_user WHERE u_email = ? AND u_pass = ? AND u_type = 'Admin'";
-
-            try (Connection con = DriverManager.getConnection("jdbc:sqlite:mtb.db");
-                    PreparedStatement pst = con.prepareStatement(sql)) {
-
-                pst.setString(1, loggedInEmail);
-                pst.setString(2, enteredPassword);
-
-                ResultSet rs = pst.executeQuery();
-
-                if (rs.next()) {
-                    return true; // correct password AND is admin
-                } else {
-                    JOptionPane.showMessageDialog(this, "Incorrect password or not Admin!");
-                    return false;
-                }
-
-            } catch (SQLException e) {
-                JOptionPane.showMessageDialog(this, "Database error: " + e.getMessage());
-                return false;
-            }
-        }
-
-        return false;
     }
 
     private void filterMovies(String keyword) {
@@ -198,7 +124,7 @@ public class moviemanagement extends BaseFrame {
 
         String sql = "SELECT * FROM tbl_movies WHERE "
                 + "m_id LIKE ? OR movie_name LIKE ? OR genre LIKE ? "
-                + "OR showtime LIKE ? OR available_seats LIKE ? OR run_time LIKE ?";
+                + "OR show_time LIKE ? OR available_seats LIKE ? OR run_time LIKE ?";
 
         try (Connection con = DriverManager.getConnection(url);
                 PreparedStatement pst = con.prepareStatement(sql)) {
@@ -215,7 +141,7 @@ public class moviemanagement extends BaseFrame {
                     rs.getInt("m_id"),
                     rs.getString("movie_name"),
                     rs.getString("genre"),
-                    rs.getString("showtime"),
+                    rs.getString("show_time"),
                     rs.getInt("available_seats"),
                     rs.getString("run_time"),};
                 model.addRow(row);
@@ -285,7 +211,7 @@ public class moviemanagement extends BaseFrame {
                     rs.getInt("m_id"),
                     rs.getString("movie_name"),
                     rs.getString("genre"),
-                    rs.getString("showtime"),
+                    rs.getString("show_time"),
                     rs.getInt("available_seats"),
                     rs.getString("run_time"),});
             }
@@ -307,7 +233,12 @@ public class moviemanagement extends BaseFrame {
                     dialog.getGenre(),
                     dialog.getShowtime(),
                     dialog.getSeats(),
-                    dialog.getRuntime())) {
+                    dialog.getRuntime(),
+                    dialog.getRated(),
+                    dialog.getStatus(),
+                    dialog.getPosterName(), // this is 1.jpg
+                    dialog.getDescription()
+            )) {
 
                 JOptionPane.showMessageDialog(this, "Movie added successfully!");
                 loadMovies();
@@ -324,10 +255,38 @@ public class moviemanagement extends BaseFrame {
         String genre = movietable.getValueAt(row, 2).toString();
         String showtime = movietable.getValueAt(row, 3).toString();
         int seats = Integer.parseInt(movietable.getValueAt(row, 4).toString());
-        int runtime = Integer.parseInt(movietable.getValueAt(row, 5).toString());
+        String runtime = movietable.getValueAt(row, 5).toString();
+
+        // You need to retrieve rated, status, posterName, description from DB (not shown in the table)
+        // So fetch them from DB by movieId:
+        String rated = "";
+        String status = "";
+        String posterName = "";
+        String description = "";
+
+        try (Connection con = DriverManager.getConnection("jdbc:sqlite:mtb.db");
+                PreparedStatement pst = con.prepareStatement("SELECT rated, status, description FROM tbl_movies WHERE m_id = ?")) {
+            pst.setInt(1, movieId);
+            ResultSet rs = pst.executeQuery();
+            if (rs.next()) {
+                rated = rs.getString("rated");
+                status = rs.getString("status");
+                description = rs.getString("description");
+                // Poster is a BLOB, so for editing just let user type the filename again or handle separately
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
         MovieFormDialog dialog = new MovieFormDialog(this, "Update Movie");
+
+        // Add a setter method in your dialog for the new fields (see below)
         dialog.setValues(name, genre, showtime, seats, runtime);
+        dialog.setRated(rated);
+        dialog.setStatus(status);
+        dialog.setPosterName(posterName);  // You may want to store filename somewhere or handle differently
+        dialog.setDescription(description);
+
         dialog.setVisible(true);
 
         if (dialog.isConfirmed()) {
@@ -338,7 +297,12 @@ public class moviemanagement extends BaseFrame {
                     dialog.getGenre(),
                     dialog.getShowtime(),
                     dialog.getSeats(),
-                    dialog.getRuntime())) {
+                    dialog.getRuntime(),
+                    dialog.getRated(),
+                    dialog.getStatus(),
+                    dialog.getPosterName(),
+                    dialog.getDescription()
+            )) {
 
                 JOptionPane.showMessageDialog(this, "Movie updated!");
                 loadMovies();
@@ -373,14 +337,7 @@ public class moviemanagement extends BaseFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jToggleButton1 = new javax.swing.JToggleButton();
         jPanel1 = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        movietable = new javax.swing.JTable();
-        jTextField1 = new javax.swing.JTextField();
-        deletemovie = new javax.swing.JLabel();
-        addmovie = new javax.swing.JLabel();
-        updatemovie = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
@@ -389,76 +346,21 @@ public class moviemanagement extends BaseFrame {
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
-
-        jToggleButton1.setText("jToggleButton1");
+        addmovie = new javax.swing.JLabel();
+        updatemovie = new javax.swing.JLabel();
+        deletemovie = new javax.swing.JLabel();
+        jTextField1 = new javax.swing.JTextField();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        movietable = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
-        jPanel1.setPreferredSize(new java.awt.Dimension(961, 571));
 
-        movietable.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        movietable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null}
-            },
-            new String [] {
-                "Movie ID", "Movie Name", "Genre", "Showtime", "Available seats", "Run time"
-            }
-        ) {
-            Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.String.class
-            };
-
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
-        });
-        movietable.setColumnSelectionAllowed(true);
-        movietable.setGridColor(new java.awt.Color(255, 255, 255));
-        jScrollPane1.setViewportView(movietable);
-        movietable.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-
-        jTextField1.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
-        jTextField1.setText("jTextField1");
-        jTextField1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField1ActionPerformed(evt);
-            }
-        });
-
-        deletemovie.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
-        deletemovie.setText("Delete Movie");
-        deletemovie.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                deletemovieMouseClicked(evt);
-            }
-        });
-
-        addmovie.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
-        addmovie.setText("Add Movie");
-        addmovie.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                addmovieMouseClicked(evt);
-            }
-        });
-
-        updatemovie.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
-        updatemovie.setText("Update Movie");
-        updatemovie.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                updatemovieMouseClicked(evt);
-            }
-        });
-
-        jPanel2.setBackground(new java.awt.Color(207, 201, 234));
-
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagesicons/mtblogo3.png"))); // NOI18N
+        jPanel2.setBackground(new java.awt.Color(200, 0, 0));
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        jLabel2.setForeground(new java.awt.Color(255, 255, 255));
         jLabel2.setText("Dashboard");
         jLabel2.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -467,6 +369,7 @@ public class moviemanagement extends BaseFrame {
         });
 
         jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        jLabel3.setForeground(new java.awt.Color(255, 255, 255));
         jLabel3.setText("Log out");
         jLabel3.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -475,6 +378,7 @@ public class moviemanagement extends BaseFrame {
         });
 
         jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        jLabel4.setForeground(new java.awt.Color(255, 255, 255));
         jLabel4.setText("Movies");
         jLabel4.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -483,6 +387,7 @@ public class moviemanagement extends BaseFrame {
         });
 
         jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        jLabel5.setForeground(new java.awt.Color(255, 255, 255));
         jLabel5.setText("Bookings ");
         jLabel5.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -491,6 +396,7 @@ public class moviemanagement extends BaseFrame {
         });
 
         jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        jLabel6.setForeground(new java.awt.Color(255, 255, 255));
         jLabel6.setText("Users");
         jLabel6.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -499,6 +405,7 @@ public class moviemanagement extends BaseFrame {
         });
 
         jLabel7.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        jLabel7.setForeground(new java.awt.Color(255, 255, 255));
         jLabel7.setText("Transactions");
         jLabel7.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -525,7 +432,7 @@ public class moviemanagement extends BaseFrame {
                 .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(90, 90, 90)
                 .addComponent(jLabel3)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(213, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -542,35 +449,95 @@ public class moviemanagement extends BaseFrame {
             .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
+        addmovie.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+        addmovie.setText("Add Movie");
+        addmovie.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                addmovieMouseClicked(evt);
+            }
+        });
+
+        updatemovie.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+        updatemovie.setText("Update Movie");
+        updatemovie.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                updatemovieMouseClicked(evt);
+            }
+        });
+
+        deletemovie.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+        deletemovie.setText("Delete Movie");
+        deletemovie.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                deletemovieMouseClicked(evt);
+            }
+        });
+
+        jTextField1.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+        jTextField1.setText("jTextField1");
+        jTextField1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTextField1ActionPerformed(evt);
+            }
+        });
+
+        movietable.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        movietable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null}
+            },
+            new String [] {
+                "Movie ID", "Movie Name", "Genre", "Showtime", "Available seats", "Run time"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.String.class
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+        });
+        movietable.setColumnSelectionAllowed(true);
+        movietable.setGridColor(new java.awt.Color(255, 255, 255));
+        jScrollPane1.setViewportView(movietable);
+        movietable.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTextField1)
+            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(109, 109, 109)
+                .addComponent(addmovie, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(109, 109, 109)
+                .addComponent(updatemovie, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(110, 110, 110)
+                .addComponent(deletemovie, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addComponent(jScrollPane1)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(144, 144, 144)
-                .addComponent(addmovie, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(81, 81, 81)
-                .addComponent(updatemovie, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(89, 89, 89)
-                .addComponent(deletemovie, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(154, Short.MAX_VALUE))
-            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap()
+                .addComponent(jTextField1)
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(20, 20, 20)
+                .addGap(36, 36, 36)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(updatemovie, javax.swing.GroupLayout.DEFAULT_SIZE, 40, Short.MAX_VALUE)
                     .addComponent(addmovie, javax.swing.GroupLayout.DEFAULT_SIZE, 39, Short.MAX_VALUE)
+                    .addComponent(updatemovie, javax.swing.GroupLayout.DEFAULT_SIZE, 40, Short.MAX_VALUE)
                     .addComponent(deletemovie, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 368, Short.MAX_VALUE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 318, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -581,63 +548,11 @@ public class moviemanagement extends BaseFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 578, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
-
-        String keyword = jTextField1.getText().trim();
-
-        if (keyword.isEmpty()) {
-            loadMovies();  // reload all
-        } else {
-            filterMovies(keyword);
-        }
-    }//GEN-LAST:event_jTextField1ActionPerformed
-
-    private void addmovieMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_addmovieMouseClicked
-
-        if (!confirmAdminPassword()) {
-            return;
-        }
-
-        addMovieAction();
-    }//GEN-LAST:event_addmovieMouseClicked
-
-    private void updatemovieMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_updatemovieMouseClicked
-
-        int selectedRow = movietable.getSelectedRow();
-
-        if (selectedRow == -1) {
-            JOptionPane.showMessageDialog(this, "Please select a movie first.");
-            return;
-        }
-
-        if (!confirmAdminPassword()) {
-            return;
-        }
-
-        editMovieAction(selectedRow);
-    }//GEN-LAST:event_updatemovieMouseClicked
-
-    private void deletemovieMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_deletemovieMouseClicked
-
-        int selectedRow = movietable.getSelectedRow();
-
-        if (selectedRow == -1) {
-            JOptionPane.showMessageDialog(this, "Please select a movie first.");
-            return;
-        }
-
-        if (!confirmAdminPassword()) {
-            return;
-        }
-
-        deleteMovieAction(selectedRow);
-    }//GEN-LAST:event_deletemovieMouseClicked
 
     private void jLabel2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel2MouseClicked
 
@@ -652,11 +567,11 @@ public class moviemanagement extends BaseFrame {
 
         // Show confirmation dialog
         int confirm = JOptionPane.showConfirmDialog(
-            this,
-            "Are you sure you want to log out?",
-            "Confirm Logout",
-            JOptionPane.YES_NO_OPTION,
-            JOptionPane.QUESTION_MESSAGE
+                this,
+                "Are you sure you want to log out?",
+                "Confirm Logout",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE
         );
 
         if (confirm == JOptionPane.YES_OPTION) {
@@ -705,15 +620,74 @@ public class moviemanagement extends BaseFrame {
         this.dispose();
     }//GEN-LAST:event_jLabel7MouseClicked
 
+    private void addmovieMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_addmovieMouseClicked
+
+        addMovieAction();
+    }//GEN-LAST:event_addmovieMouseClicked
+
+    private void updatemovieMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_updatemovieMouseClicked
+
+        int row = movietable.getSelectedRow();
+        if (row >= 0) {
+            editMovieAction(row);
+        } else {
+            JOptionPane.showMessageDialog(this, "Select a movie first!");
+        }
+
+    }//GEN-LAST:event_updatemovieMouseClicked
+
+    private void deletemovieMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_deletemovieMouseClicked
+
+        int row = movietable.getSelectedRow();
+        if (row >= 0) {
+            deleteMovieAction(row);
+        } else {
+            JOptionPane.showMessageDialog(this, "Select a movie first!");
+        }
+    }//GEN-LAST:event_deletemovieMouseClicked
+
+    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
+
+        String keyword = jTextField1.getText().trim();
+
+        if (keyword.isEmpty()) {
+            loadMovies();  // reload all
+        } else {
+            filterMovies(keyword);
+        }
+    }//GEN-LAST:event_jTextField1ActionPerformed
+
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        java.awt.EventQueue.invokeLater(() -> {
-            if (!Session.isLoggedIn()) {
-                JOptionPane.showMessageDialog(null, "You need to login first.");
-                new Login().setVisible(true);
-            } else {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(moviemanagement.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(moviemanagement.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(moviemanagement.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(moviemanagement.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+        //</editor-fold>
+
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
                 new moviemanagement().setVisible(true);
             }
         });
@@ -733,7 +707,6 @@ public class moviemanagement extends BaseFrame {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField jTextField1;
-    private javax.swing.JToggleButton jToggleButton1;
     private javax.swing.JTable movietable;
     private javax.swing.JLabel updatemovie;
     // End of variables declaration//GEN-END:variables

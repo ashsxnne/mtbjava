@@ -6,17 +6,16 @@
 package Admin;
 
 import KiosksPages.HomeK;
-import design.BaseFrame;
 import javax.swing.JOptionPane;
 
 /**
  *
  * @author ph2tn
  */
-public class transactionmanagement extends BaseFrame {
+public class transactionmanagement extends javax.swing.JFrame {
 
     /**
-     * Creates new form transactionmanagement
+     * Creates new form transactionmanagement1
      */
     public transactionmanagement() {
         initComponents();
@@ -42,15 +41,10 @@ public class transactionmanagement extends BaseFrame {
         jLabel7 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setPreferredSize(new java.awt.Dimension(961, 578));
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
-        jPanel1.setForeground(new java.awt.Color(255, 255, 255));
-        jPanel1.setFocusable(false);
 
-        jPanel2.setBackground(new java.awt.Color(207, 201, 234));
-
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagesicons/mtblogo3.png"))); // NOI18N
+        jPanel2.setBackground(new java.awt.Color(200, 0, 0));
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel2.setText("Dashboard");
@@ -117,7 +111,7 @@ public class transactionmanagement extends BaseFrame {
                 .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(27, 27, 27)
                 .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 107, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 220, Short.MAX_VALUE)
                 .addComponent(jLabel3)
                 .addGap(84, 84, 84))
         );
@@ -146,7 +140,7 @@ public class transactionmanagement extends BaseFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 493, Short.MAX_VALUE))
+                .addGap(0, 465, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -254,6 +248,7 @@ public class transactionmanagement extends BaseFrame {
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(transactionmanagement.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */

@@ -1,21 +1,28 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package Admin;
 
 import CRUD.ActionButtonEditor;
 import CRUD.ActionButtonRenderer;
 import KiosksPages.HomeK;
-import Main.Login;
-import User.Profile;
 import config.Session;
 import design.BaseFrame;
 import java.awt.Color;
 import java.awt.Font;
 import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Statement;
-import javax.swing.JOptionPane;
-import javax.swing.table.DefaultTableModel;
-import java.sql.*;
+import java.sql.SQLException;
+import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
@@ -26,19 +33,11 @@ import javax.swing.table.DefaultTableModel;
 public class usermanagement extends BaseFrame {
 
     /**
-     * Creates new form usermanagement
+     * Creates new form usermanagement1
      */
     public usermanagement() {
-
-        /// Check session first
-        if (!Session.isLoggedIn()) {
-            JOptionPane.showMessageDialog(null, "You need to login first.");
-            new Login().setVisible(true); // send user to login
-            dispose(); // close this frame
-            return;   // stop constructor
-        }
-
         initComponents();
+
         loadUsers();
         styleUserTable();
 
@@ -195,9 +194,6 @@ public class usermanagement extends BaseFrame {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        usertable = new javax.swing.JTable();
-        jTextField1 = new javax.swing.JTextField();
         jPanel7 = new javax.swing.JPanel();
         jLabel25 = new javax.swing.JLabel();
         jLabel26 = new javax.swing.JLabel();
@@ -206,48 +202,16 @@ public class usermanagement extends BaseFrame {
         jLabel29 = new javax.swing.JLabel();
         jLabel30 = new javax.swing.JLabel();
         jLabel31 = new javax.swing.JLabel();
+        jTextField1 = new javax.swing.JTextField();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        usertable = new javax.swing.JTable();
+        jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
 
-        usertable.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        usertable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null}
-            },
-            new String [] {
-                "User Id", "User FullName", "User Email", "User Pass", "Type", "Status", "Action"
-            }
-        ) {
-            Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.Object.class
-            };
-
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
-        });
-        usertable.setGridColor(new java.awt.Color(255, 255, 255));
-        jScrollPane1.setViewportView(usertable);
-        if (usertable.getColumnModel().getColumnCount() > 0) {
-            usertable.getColumnModel().getColumn(6).setHeaderValue("Action");
-        }
-
-        jTextField1.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
-        jTextField1.setText("jTextField1");
-        jTextField1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField1ActionPerformed(evt);
-            }
-        });
-
-        jPanel7.setBackground(new java.awt.Color(207, 201, 234));
-
-        jLabel25.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagesicons/mtblogo3.png"))); // NOI18N
+        jPanel7.setBackground(new java.awt.Color(200, 0, 0));
 
         jLabel26.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel26.setText("Dashboard");
@@ -316,7 +280,7 @@ public class usermanagement extends BaseFrame {
                 .addComponent(jLabel31, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(90, 90, 90)
                 .addComponent(jLabel27)
-                .addContainerGap(109, Short.MAX_VALUE))
+                .addContainerGap(213, Short.MAX_VALUE))
         );
         jPanel7Layout.setVerticalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -333,23 +297,80 @@ public class usermanagement extends BaseFrame {
             .addComponent(jLabel25, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
+        jTextField1.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+        jTextField1.setText("jTextField1");
+        jTextField1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTextField1ActionPerformed(evt);
+            }
+        });
+
+        usertable.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        usertable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null}
+            },
+            new String [] {
+                "User Id", "User FullName", "User Email", "User Pass", "Type", "Status", "Action"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.Object.class
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+        });
+        usertable.setGridColor(new java.awt.Color(255, 255, 255));
+        jScrollPane1.setViewportView(usertable);
+
+        jButton1.setBackground(new java.awt.Color(200, 0, 0));
+        jButton1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        jButton1.setForeground(new java.awt.Color(255, 255, 255));
+        jButton1.setText("Add Users");
+        jButton1.setBorderPainted(false);
+        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jButton1MouseClicked(evt);
+            }
+        });
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 961, Short.MAX_VALUE)
             .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(jTextField1)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(390, 390, 390)
+                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 928, Short.MAX_VALUE)
+                    .addComponent(jTextField1))
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(27, 27, 27)
+                .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 66, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
                 .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(28, 28, 28)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 262, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -366,10 +387,6 @@ public class usermanagement extends BaseFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField1ActionPerformed
-
     private void jLabel26MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel26MouseClicked
 
         AdminDashboard AdminDashboard = new AdminDashboard();   // or your main frame
@@ -383,11 +400,11 @@ public class usermanagement extends BaseFrame {
 
         // Show confirmation dialog
         int confirm = JOptionPane.showConfirmDialog(
-            this,
-            "Are you sure you want to log out?",
-            "Confirm Logout",
-            JOptionPane.YES_NO_OPTION,
-            JOptionPane.QUESTION_MESSAGE
+                this,
+                "Are you sure you want to log out?",
+                "Confirm Logout",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE
         );
 
         if (confirm == JOptionPane.YES_OPTION) {
@@ -436,51 +453,149 @@ public class usermanagement extends BaseFrame {
         this.dispose();
     }//GEN-LAST:event_jLabel31MouseClicked
 
+    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTextField1ActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
+
+        // add tag user ngari
+        JDialog addDialog = new JDialog(this, "Add New User", true);
+        addDialog.setSize(400, 300);
+        addDialog.setLocationRelativeTo(this);
+        addDialog.setLayout(null);
+        addDialog.getContentPane().setBackground(Color.WHITE);
+
+        // Labels and Fields
+        JLabel emailLabel = new JLabel("Email:");
+        emailLabel.setBounds(30, 30, 100, 25);
+        addDialog.add(emailLabel);
+
+        JTextField emailField = new JTextField();
+        emailField.setBounds(140, 30, 200, 25);
+        addDialog.add(emailField);
+
+        JLabel passLabel = new JLabel("Password:");
+        passLabel.setBounds(30, 70, 100, 25);
+        addDialog.add(passLabel);
+
+        JPasswordField passField = new JPasswordField();
+        passField.setBounds(140, 70, 200, 25);
+        addDialog.add(passField);
+
+        JLabel nameLabel = new JLabel("Full Name:");
+        nameLabel.setBounds(30, 110, 100, 25);
+        addDialog.add(nameLabel);
+
+        JTextField nameField = new JTextField();
+        nameField.setBounds(140, 110, 200, 25);
+        addDialog.add(nameField);
+
+        // Add User Button
+        JButton submitBtn = new JButton("Add User");
+        submitBtn.setBounds(140, 160, 120, 30);
+        submitBtn.setBackground(new Color(200, 0, 0));
+        submitBtn.setForeground(Color.WHITE);
+        submitBtn.setFocusPainted(false);
+        addDialog.add(submitBtn);
+
+        // Action listener for Add User
+        submitBtn.addActionListener(e -> {
+            String email = emailField.getText().trim();
+            String pass = new String(passField.getPassword()).trim();
+            String name = nameField.getText().trim();
+
+            if (email.isEmpty() || pass.isEmpty() || name.isEmpty()) {
+                JOptionPane.showMessageDialog(addDialog, "Please fill all fields!");
+                return;
+            }
+
+            String url = "jdbc:sqlite:mtb.db";
+
+            // Check if email exists and insert
+            try (Connection con = DriverManager.getConnection(url)) {
+                // Check existing email
+                String checkSql = "SELECT * FROM tbl_user WHERE u_email = ?";
+                PreparedStatement pstCheck = con.prepareStatement(checkSql);
+                pstCheck.setString(1, email);
+                ResultSet rs = pstCheck.executeQuery();
+                if (rs.next()) {
+                    JOptionPane.showMessageDialog(addDialog, "Email already exists!");
+                    return;
+                }
+
+                // Insert new user with default type and status
+                String sql = "INSERT INTO tbl_user(u_email, u_pass, u_name, u_type, u_status) VALUES(?,?,?,?,?)";
+                PreparedStatement pst = con.prepareStatement(sql);
+                pst.setString(1, email);
+                pst.setString(2, pass);
+                pst.setString(3, name);
+                pst.setString(4, "staff"); // default type
+                pst.setInt(5, 0);          // status 0 = pending
+                pst.executeUpdate();
+
+                JOptionPane.showMessageDialog(addDialog, "User added successfully!");
+                addDialog.dispose();
+                loadUsers(); // refresh table
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(addDialog, "Error: " + ex.getMessage());
+            }
+        });
+
+        addDialog.setVisible(true);
+
+    }//GEN-LAST:event_jButton1MouseClicked
+
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        java.awt.EventQueue.invokeLater(() -> {
-            if (!Session.isLoggedIn()) {
-                JOptionPane.showMessageDialog(null, "You need to login first.");
-                new Login().setVisible(true);
-            } else {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(usermanagement.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(usermanagement.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(usermanagement.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(usermanagement.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+        //</editor-fold>
+
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
                 new usermanagement().setVisible(true);
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel10;
-    private javax.swing.JLabel jLabel11;
-    private javax.swing.JLabel jLabel12;
-    private javax.swing.JLabel jLabel13;
-    private javax.swing.JLabel jLabel14;
-    private javax.swing.JLabel jLabel15;
-    private javax.swing.JLabel jLabel16;
-    private javax.swing.JLabel jLabel17;
-    private javax.swing.JLabel jLabel18;
-    private javax.swing.JLabel jLabel2;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel25;
     private javax.swing.JLabel jLabel26;
     private javax.swing.JLabel jLabel27;
     private javax.swing.JLabel jLabel28;
     private javax.swing.JLabel jLabel29;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel30;
     private javax.swing.JLabel jLabel31;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
-    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
-    private javax.swing.JPanel jPanel4;
-    private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel7;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField jTextField1;
