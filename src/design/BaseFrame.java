@@ -5,10 +5,14 @@ import javax.swing.JFrame;
 public class BaseFrame extends JFrame {
 
     public BaseFrame() {
-        setSize(961, 578);
-        setResizable(false);              // no resizing
-        setLocationRelativeTo(null);      // center
+        this(946, 611);
+    }
+
+    public BaseFrame(int width, int height) {
+        setSize(width, height);
+        setLocationRelativeTo(null);   // center on screen
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setUndecorated(false);            
+        setResizable(false);
+        setUndecorated(false);         // true = no title bar
     }
 }

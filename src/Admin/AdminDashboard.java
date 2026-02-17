@@ -1,7 +1,7 @@
 package Admin;
 
+import KiosksPages.HomeK;
 import Main.Login;
-import Main.landingpage;
 import config.Session;
 import design.BaseFrame;
 import config.config;
@@ -26,7 +26,7 @@ public class AdminDashboard extends BaseFrame {
 
     public AdminDashboard() {
 
-        // Check session first
+        //Check session first
         if (!Session.isLoggedIn()) {
             JOptionPane.showMessageDialog(null, "You need to login first.");
             new Login().setVisible(true); // send user to login
@@ -111,11 +111,12 @@ public class AdminDashboard extends BaseFrame {
 
         jPanel3.setBackground(new java.awt.Color(255, 255, 255));
 
-        jPanel2.setBackground(new java.awt.Color(207, 201, 234));
+        jPanel2.setBackground(new java.awt.Color(200, 0, 0));
 
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagesicons/mtblogo3.png"))); // NOI18N
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        jLabel2.setForeground(new java.awt.Color(255, 255, 255));
         jLabel2.setText("Dashboard");
         jLabel2.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -124,6 +125,7 @@ public class AdminDashboard extends BaseFrame {
         });
 
         jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        jLabel3.setForeground(new java.awt.Color(255, 255, 255));
         jLabel3.setText("Log out");
         jLabel3.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -132,6 +134,7 @@ public class AdminDashboard extends BaseFrame {
         });
 
         jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        jLabel4.setForeground(new java.awt.Color(255, 255, 255));
         jLabel4.setText("Movies");
         jLabel4.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -140,6 +143,7 @@ public class AdminDashboard extends BaseFrame {
         });
 
         jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        jLabel5.setForeground(new java.awt.Color(255, 255, 255));
         jLabel5.setText("Bookings ");
         jLabel5.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -148,6 +152,7 @@ public class AdminDashboard extends BaseFrame {
         });
 
         jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        jLabel6.setForeground(new java.awt.Color(255, 255, 255));
         jLabel6.setText("Users");
         jLabel6.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -156,6 +161,7 @@ public class AdminDashboard extends BaseFrame {
         });
 
         jLabel7.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        jLabel7.setForeground(new java.awt.Color(255, 255, 255));
         jLabel7.setText("Transactions");
         jLabel7.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -420,10 +426,10 @@ public class AdminDashboard extends BaseFrame {
 
         if (confirm == JOptionPane.YES_OPTION) {
             // User confirmed logout
-            landingpage landingpage = new landingpage();
-            landingpage.setVisible(true);
-            landingpage.pack();
-            landingpage.setLocationRelativeTo(null);
+            HomeK HomeK = new HomeK();
+            HomeK.setVisible(true);
+            HomeK.pack();
+            HomeK.setLocationRelativeTo(null);
             this.dispose();
         }
     }//GEN-LAST:event_jLabel3MouseClicked
@@ -480,7 +486,7 @@ public class AdminDashboard extends BaseFrame {
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        java.awt.EventQueue.invokeLater(() -> {
+       java.awt.EventQueue.invokeLater(() -> {
             if (!Session.isLoggedIn()) {
                 JOptionPane.showMessageDialog(null, "You need to login first.");
                 new Login().setVisible(true);

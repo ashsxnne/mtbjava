@@ -5,7 +5,7 @@
  */
 package Admin;
 
-import Main.landingpage;
+import KiosksPages.HomeK;
 import design.BaseFrame;
 import javax.swing.JOptionPane;
 
@@ -185,10 +185,10 @@ public class transactionmanagement extends BaseFrame {
 
         if (confirm == JOptionPane.YES_OPTION) {
             // User confirmed logout
-            landingpage landingpage = new landingpage();
-            landingpage.setVisible(true);
-            landingpage.pack();
-            landingpage.setLocationRelativeTo(null);
+            HomeK HomeK = new HomeK();
+            HomeK.setVisible(true);
+            HomeK.pack();
+            HomeK.setLocationRelativeTo(null);
             this.dispose();
         }
     }//GEN-LAST:event_jLabel3MouseClicked

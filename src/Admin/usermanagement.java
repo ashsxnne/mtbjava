@@ -1,8 +1,8 @@
 package Admin;
 
-import Main.landingpage;
 import CRUD.ActionButtonEditor;
 import CRUD.ActionButtonRenderer;
+import KiosksPages.HomeK;
 import Main.Login;
 import User.Profile;
 import config.Session;
@@ -392,10 +392,10 @@ public class usermanagement extends BaseFrame {
 
         if (confirm == JOptionPane.YES_OPTION) {
             // User confirmed logout
-            landingpage landingpage = new landingpage();
-            landingpage.setVisible(true);
-            landingpage.pack();
-            landingpage.setLocationRelativeTo(null);
+            HomeK HomeK = new HomeK();
+            HomeK.setVisible(true);
+            HomeK.pack();
+            HomeK.setLocationRelativeTo(null);
             this.dispose();
         }
     }//GEN-LAST:event_jLabel27MouseClicked

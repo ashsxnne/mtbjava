@@ -5,8 +5,8 @@
  */
 package Admin;
 
+import KiosksPages.HomeK;
 import Main.Login;
-import Main.landingpage;
 import config.Session;
 import design.BaseFrame;
 import javax.swing.JOptionPane;
@@ -194,10 +194,10 @@ public class bookingmanagement extends BaseFrame {
 
         if (confirm == JOptionPane.YES_OPTION) {
             // User confirmed logout
-            landingpage landingpage = new landingpage();
-            landingpage.setVisible(true);
-            landingpage.pack();
-            landingpage.setLocationRelativeTo(null);
+            HomeK HomeK = new HomeK();
+            HomeK.setVisible(true);
+            HomeK.pack();
+            HomeK.setLocationRelativeTo(null);
             this.dispose();
         }
     }//GEN-LAST:event_jLabel3MouseClicked
