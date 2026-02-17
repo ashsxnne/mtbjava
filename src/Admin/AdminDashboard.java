@@ -1,47 +1,42 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package Admin;
 
 import KiosksPages.HomeK;
-import Main.Login;
-import config.Session;
-import design.BaseFrame;
 import config.config;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import javax.swing.JOptionPane;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import javax.swing.BorderFactory;
-import javax.swing.JPanel;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
 /**
  *
- * @author PC14
+ * @author ph2tn
  */
-public class AdminDashboard extends BaseFrame {
+public class AdminDashboard extends javax.swing.JFrame {
 
+    /**
+     * Creates new form AdminDashboard1
+     */
     public AdminDashboard() {
-
-        //Check session first
-        if (!Session.isLoggedIn()) {
-            JOptionPane.showMessageDialog(null, "You need to login first.");
-            new Login().setVisible(true); // send user to login
-            dispose(); // close this frame
-            return;   // stop constructor
-        }
-
         initComponents();
 
-        setupStatCard(cardUsers, new Color(120, 190, 255), "Customers", "👥", usersCount);
+        setupStatCard(cardUsers, new Color(120, 190, 255), "Staff", "👥", usersCount);
         setupStatCard(cardBookings, new Color(255, 170, 120), "Bookings", "🎟️", bookingsCount);
         setupStatCard(cardMovies, new Color(207, 201, 234), "Movies", "🎬", moviesCount);
 
         loadDashboardCounts();
-
     }
 
     private void setupStatCard(
@@ -84,12 +79,106 @@ public class AdminDashboard extends BaseFrame {
         card.repaint();
     }
 
+    private void loadDashboardCounts() {
+        try (Connection conn = config.connectDB()) {
+
+            // Count only active customers
+            String userSQL = "SELECT COUNT(*) FROM tbl_user WHERE u_type='Staff' AND u_status = 1";
+            PreparedStatement psUser = conn.prepareStatement(userSQL);
+            ResultSet rsUser = psUser.executeQuery();
+            if (rsUser.next()) {
+                animateCount(usersCount, rsUser.getInt(1));
+            }
+
+            // Count all bookings
+            String bookingSQL = "SELECT COUNT(*) FROM tbl_booking";
+            PreparedStatement psBooking = conn.prepareStatement(bookingSQL);
+            ResultSet rsBooking = psBooking.executeQuery();
+            if (rsBooking.next()) {
+                animateCount(bookingsCount, rsBooking.getInt(1));
+            }
+
+            // Count all movies
+            String movieSQL = "SELECT COUNT(*) FROM tbl_movies";
+            PreparedStatement psMovie = conn.prepareStatement(movieSQL);
+            ResultSet rsMovie = psMovie.executeQuery();
+            if (rsMovie.next()) {
+                animateCount(moviesCount, rsMovie.getInt(1));
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private JPanel createStatCard(
+            Color accent,
+            String title,
+            String iconText,
+            JLabel countLabel
+    ) {
+        JPanel card = new JPanel();
+        card.setLayout(null);
+        card.setBackground(Color.WHITE);
+        card.setBorder(BorderFactory.createLineBorder(accent, 2));
+        card.setPreferredSize(new java.awt.Dimension(240, 160));
+        card.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+        JLabel icon = new JLabel(iconText);
+        icon.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 26));
+        icon.setBounds(20, 15, 40, 40);
+        icon.setForeground(accent);
+
+        JLabel titleLabel = new JLabel(title.toUpperCase());
+        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        titleLabel.setForeground(new Color(120, 120, 120));
+        titleLabel.setBounds(20, 55, 200, 20);
+
+        countLabel.setFont(new Font("Segoe UI", Font.BOLD, 40));
+        countLabel.setForeground(accent);
+        countLabel.setBounds(20, 80, 200, 50);
+        countLabel.setText("0");
+
+        card.add(icon);
+        card.add(titleLabel);
+        card.add(countLabel);
+
+        // 🔥 Hover effect
+        card.addMouseListener(new MouseAdapter() {
+            public void mouseEntered(MouseEvent e) {
+                card.setBackground(new Color(245, 243, 255));
+            }
+
+            public void mouseExited(MouseEvent e) {
+                card.setBackground(Color.WHITE);
+            }
+        });
+
+        return card;
+    }
+
+    private void animateCount(JLabel label, int target) {
+        new Thread(() -> {
+            int count = 0;
+            while (count <= target) {
+                final int value = count;
+                javax.swing.SwingUtilities.invokeLater(()
+                        -> label.setText(String.valueOf(value))
+                );
+                count++;
+                try {
+                    Thread.sleep(15);
+                } catch (Exception e) {
+                }
+            }
+        }).start();
+    }
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        jPanel3 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
@@ -98,22 +187,18 @@ public class AdminDashboard extends BaseFrame {
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
-        cardBookings = new javax.swing.JPanel();
-        bookingsCount = new javax.swing.JLabel();
         cardUsers = new javax.swing.JPanel();
         usersCount = new javax.swing.JLabel();
+        cardBookings = new javax.swing.JPanel();
+        bookingsCount = new javax.swing.JLabel();
         cardMovies = new javax.swing.JPanel();
         moviesCount = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jPanel1.setPreferredSize(new java.awt.Dimension(961, 578));
-
-        jPanel3.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
 
         jPanel2.setBackground(new java.awt.Color(200, 0, 0));
-
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagesicons/mtblogo3.png"))); // NOI18N
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(255, 255, 255));
@@ -205,6 +290,25 @@ public class AdminDashboard extends BaseFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        usersCount.setText("usersCount");
+
+        javax.swing.GroupLayout cardUsersLayout = new javax.swing.GroupLayout(cardUsers);
+        cardUsers.setLayout(cardUsersLayout);
+        cardUsersLayout.setHorizontalGroup(
+            cardUsersLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(cardUsersLayout.createSequentialGroup()
+                .addGap(100, 100, 100)
+                .addComponent(usersCount)
+                .addContainerGap(119, Short.MAX_VALUE))
+        );
+        cardUsersLayout.setVerticalGroup(
+            cardUsersLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(cardUsersLayout.createSequentialGroup()
+                .addGap(115, 115, 115)
+                .addComponent(usersCount)
+                .addContainerGap(192, Short.MAX_VALUE))
+        );
+
         cardBookings.setPreferredSize(new java.awt.Dimension(260, 323));
 
         bookingsCount.setText("bookingsCount");
@@ -224,25 +328,6 @@ public class AdminDashboard extends BaseFrame {
                 .addGap(109, 109, 109)
                 .addComponent(bookingsCount)
                 .addContainerGap(198, Short.MAX_VALUE))
-        );
-
-        usersCount.setText("usersCount");
-
-        javax.swing.GroupLayout cardUsersLayout = new javax.swing.GroupLayout(cardUsers);
-        cardUsers.setLayout(cardUsersLayout);
-        cardUsersLayout.setHorizontalGroup(
-            cardUsersLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(cardUsersLayout.createSequentialGroup()
-                .addGap(100, 100, 100)
-                .addComponent(usersCount)
-                .addContainerGap(119, Short.MAX_VALUE))
-        );
-        cardUsersLayout.setVerticalGroup(
-            cardUsersLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(cardUsersLayout.createSequentialGroup()
-                .addGap(115, 115, 115)
-                .addComponent(usersCount)
-                .addContainerGap(192, Short.MAX_VALUE))
         );
 
         cardMovies.setPreferredSize(new java.awt.Dimension(260, 323));
@@ -266,152 +351,58 @@ public class AdminDashboard extends BaseFrame {
                 .addContainerGap(219, Short.MAX_VALUE))
         );
 
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(47, 47, 47)
-                .addComponent(cardUsers, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(26, 26, 26)
-                .addComponent(cardBookings, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 26, Short.MAX_VALUE)
-                .addComponent(cardMovies, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(50, 50, 50))
-        );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(82, 82, 82)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(cardUsers, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(cardBookings, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(cardMovies, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(60, Short.MAX_VALUE))
-        );
-
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel1Layout.createSequentialGroup()
+                    .addGap(48, 48, 48)
+                    .addComponent(cardUsers, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(26, 26, 26)
+                    .addComponent(cardBookings, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 26, Short.MAX_VALUE)
+                    .addComponent(cardMovies, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(49, 49, 49)))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 465, Short.MAX_VALUE))
+            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel1Layout.createSequentialGroup()
+                    .addGap(113, 113, 113)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(cardUsers, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(cardBookings, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(cardMovies, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addContainerGap(114, Short.MAX_VALUE)))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 952, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 550, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void loadDashboardCounts() {
-        try (Connection conn = config.connectDB()) {
+    private void jLabel2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel2MouseClicked
 
-            // Count only active customers
-            String userSQL = "SELECT COUNT(*) FROM tbl_user WHERE u_type='Customer' AND u_status = 1";
-            PreparedStatement psUser = conn.prepareStatement(userSQL);
-            ResultSet rsUser = psUser.executeQuery();
-            if (rsUser.next()) {
-                animateCount(usersCount, rsUser.getInt(1));
-            }
-
-            // Count all bookings
-            String bookingSQL = "SELECT COUNT(*) FROM tbl_booking";
-            PreparedStatement psBooking = conn.prepareStatement(bookingSQL);
-            ResultSet rsBooking = psBooking.executeQuery();
-            if (rsBooking.next()) {
-                animateCount(bookingsCount, rsBooking.getInt(1));
-            }
-
-            // Count all movies
-            String movieSQL = "SELECT COUNT(*) FROM tbl_movies";
-            PreparedStatement psMovie = conn.prepareStatement(movieSQL);
-            ResultSet rsMovie = psMovie.executeQuery();
-            if (rsMovie.next()) {
-                animateCount(moviesCount, rsMovie.getInt(1));
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private JPanel createStatCard(
-            Color accent,
-            String title,
-            String iconText,
-            JLabel countLabel
-    ) {
-        JPanel card = new JPanel();
-        card.setLayout(null);
-        card.setBackground(Color.WHITE);
-        card.setBorder(BorderFactory.createLineBorder(accent, 2));
-        card.setPreferredSize(new java.awt.Dimension(240, 160));
-        card.setCursor(new Cursor(Cursor.HAND_CURSOR));
-
-        JLabel icon = new JLabel(iconText);
-        icon.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 26));
-        icon.setBounds(20, 15, 40, 40);
-        icon.setForeground(accent);
-
-        JLabel titleLabel = new JLabel(title.toUpperCase());
-        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 13));
-        titleLabel.setForeground(new Color(120, 120, 120));
-        titleLabel.setBounds(20, 55, 200, 20);
-
-        countLabel.setFont(new Font("Segoe UI", Font.BOLD, 40));
-        countLabel.setForeground(accent);
-        countLabel.setBounds(20, 80, 200, 50);
-        countLabel.setText("0");
-
-        card.add(icon);
-        card.add(titleLabel);
-        card.add(countLabel);
-
-        // 🔥 Hover effect
-        card.addMouseListener(new MouseAdapter() {
-            public void mouseEntered(MouseEvent e) {
-                card.setBackground(new Color(245, 243, 255));
-            }
-
-            public void mouseExited(MouseEvent e) {
-                card.setBackground(Color.WHITE);
-            }
-        });
-
-        return card;
-    }
-
-    private void animateCount(JLabel label, int target) {
-        new Thread(() -> {
-            int count = 0;
-            while (count <= target) {
-                final int value = count;
-                javax.swing.SwingUtilities.invokeLater(()
-                        -> label.setText(String.valueOf(value))
-                );
-                count++;
-                try {
-                    Thread.sleep(15);
-                } catch (Exception e) {
-                }
-            }
-        }).start();
-    }
-
+        AdminDashboard AdminDashboard = new AdminDashboard();   // or your main frame
+        AdminDashboard.setVisible(true);
+        AdminDashboard.pack();
+        AdminDashboard.setLocationRelativeTo(null);
+        this.dispose();
+    }//GEN-LAST:event_jLabel2MouseClicked
 
     private void jLabel3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel3MouseClicked
 
@@ -434,26 +425,6 @@ public class AdminDashboard extends BaseFrame {
         }
     }//GEN-LAST:event_jLabel3MouseClicked
 
-    private void jLabel6MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel6MouseClicked
-
-        usermanagement usermanagement = new usermanagement();
-        usermanagement.setVisible(true);
-        usermanagement.pack();
-        usermanagement.setLocationRelativeTo(null);
-        this.dispose();
-
-    }//GEN-LAST:event_jLabel6MouseClicked
-
-    private void jLabel2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel2MouseClicked
-
-        AdminDashboard AdminDashboard = new AdminDashboard();   // or your main frame
-        AdminDashboard.setVisible(true);
-        AdminDashboard.pack();
-        AdminDashboard.setLocationRelativeTo(null);
-        this.dispose();
-
-    }//GEN-LAST:event_jLabel2MouseClicked
-
     private void jLabel4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel4MouseClicked
 
         moviemanagement moviemanagement = new moviemanagement();   // or your main frame
@@ -472,9 +443,17 @@ public class AdminDashboard extends BaseFrame {
         this.dispose();
     }//GEN-LAST:event_jLabel5MouseClicked
 
+    private void jLabel6MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel6MouseClicked
+
+        usermanagement usermanagement = new usermanagement();
+        usermanagement.setVisible(true);
+        usermanagement.pack();
+        usermanagement.setLocationRelativeTo(null);
+        this.dispose();
+    }//GEN-LAST:event_jLabel6MouseClicked
+
     private void jLabel7MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel7MouseClicked
-        
-        
+
         transactionmanagement transactionmanagement = new transactionmanagement();   // or your main frame
         transactionmanagement.setVisible(true);
         transactionmanagement.pack();
@@ -486,11 +465,33 @@ public class AdminDashboard extends BaseFrame {
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-       java.awt.EventQueue.invokeLater(() -> {
-            if (!Session.isLoggedIn()) {
-                JOptionPane.showMessageDialog(null, "You need to login first.");
-                new Login().setVisible(true);
-            } else {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(AdminDashboard.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(AdminDashboard.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(AdminDashboard.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(AdminDashboard.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+        //</editor-fold>
+
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
                 new AdminDashboard().setVisible(true);
             }
         });
@@ -510,7 +511,6 @@ public class AdminDashboard extends BaseFrame {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
     private javax.swing.JLabel moviesCount;
     private javax.swing.JLabel usersCount;
     // End of variables declaration//GEN-END:variables
