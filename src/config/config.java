@@ -347,4 +347,69 @@ public class config {
         }
     }
 
+    public boolean cancelBooking(int b_id, String reason) {
+
+        String insertSQL = "INSERT INTO tbl_canceled_booking "
+                + "(b_id, m_id, seat_no, booking_fee, poster, status, cancellation_reason, cancel_date) "
+                + "SELECT b_id, m_id, seat_no, booking_fee, poster, 'CANCELED', ?, datetime('now') "
+                + "FROM tbl_booking WHERE b_id = ?";
+
+        String getBookingSQL = "SELECT m_id, seat_no FROM tbl_booking WHERE b_id = ?";
+
+        String updateMovieSQL = "UPDATE tbl_movies SET available_seats = available_seats + ? WHERE m_id = ?";
+
+        String deleteSQL = "DELETE FROM tbl_booking WHERE b_id = ?";
+
+        try (Connection conn = connectDB()) {
+
+            conn.setAutoCommit(false);
+
+            int movieId = 0;
+            int seatCount = 0;
+
+            // 1️⃣ Get movie id and seat count
+            try (PreparedStatement pst = conn.prepareStatement(getBookingSQL)) {
+                pst.setInt(1, b_id);
+                ResultSet rs = pst.executeQuery();
+
+                if (rs.next()) {
+
+                    movieId = rs.getInt("m_id");
+
+                    String seats = rs.getString("seat_no");
+                    if (seats != null && !seats.isEmpty()) {
+                        seatCount = seats.split(",").length;
+                    }
+                }
+            }
+
+            // 2️⃣ Insert into canceled table
+            try (PreparedStatement pstInsert = conn.prepareStatement(insertSQL)) {
+                pstInsert.setString(1, reason);
+                pstInsert.setInt(2, b_id);
+                pstInsert.executeUpdate();
+            }
+
+            // 3️⃣ Restore available_seats
+            try (PreparedStatement pstUpdate = conn.prepareStatement(updateMovieSQL)) {
+                pstUpdate.setInt(1, seatCount);
+                pstUpdate.setInt(2, movieId);
+                pstUpdate.executeUpdate();
+            }
+
+            // 4️⃣ Delete from booking
+            try (PreparedStatement pstDelete = conn.prepareStatement(deleteSQL)) {
+                pstDelete.setInt(1, b_id);
+                pstDelete.executeUpdate();
+            }
+
+            conn.commit();
+            return true;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
 }

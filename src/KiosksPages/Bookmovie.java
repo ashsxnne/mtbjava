@@ -10,6 +10,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.imageio.ImageIO;
 
@@ -23,6 +24,7 @@ public class Bookmovie extends BaseFrame {
 
     private List<String> selectedSeats = new ArrayList<>();
     private List<String> takenSeats = new ArrayList<>();
+    private List<String> wheelchairSeats = Arrays.asList("A3", "A4", "B7", "C1");
     private int seatPrice = 250;
 
     private JLabel totalLabel;
@@ -133,43 +135,55 @@ public class Bookmovie extends BaseFrame {
         right.setBackground(new Color(80, 0, 0));
         right.setBorder(new EmptyBorder(20, 20, 20, 20));
 
+        // Screen label
         JLabel screen = new JLabel("SCREEN", SwingConstants.CENTER);
         screen.setForeground(softWhite);
         screen.setBorder(new MatteBorder(0, 0, 2, 0, softWhite));
         right.add(screen, BorderLayout.NORTH);
 
-        // 50 seats → 5 rows x 10 columns
+        // Seat panel → 5 rows x 10 columns
         JPanel seatPanel = new JPanel(new GridLayout(5, 10, 8, 8));
         seatPanel.setBackground(new Color(80, 0, 0));
 
-        for (int i = 1; i <= 50; i++) {
+        // Define wheelchair/PWD seats (can also fetch from DB)
+        List<String> wheelchairSeats = Arrays.asList("A3", "A4", "B7", "C1");
 
-            String seatName = "A" + i;
-            JButton seat = new JButton(seatName);
+        int totalRows = 5;
+        int seatsPerRow = 10;
+        char rowChar = 'A';
 
-            seat.setFont(new Font("Segoe UI", Font.BOLD, 14));
-            seat.setFocusPainted(false);
-            seat.setBorder(BorderFactory.createLineBorder(Color.WHITE));
+        for (int row = 0; row < totalRows; row++) {
+            for (int col = 1; col <= seatsPerRow; col++) {
+                String seatName = rowChar + String.valueOf(col);
+                JButton seat = new JButton(seatName);
 
-            if (takenSeats.contains(seatName)) {
+                seat.setFont(new Font("Segoe UI", Font.BOLD, 14));
+                seat.setFocusPainted(false);
+                seat.setBorder(BorderFactory.createLineBorder(Color.WHITE));
 
-                seat.setBackground(Color.GRAY);
-                seat.setForeground(Color.WHITE);
-                seat.setEnabled(false);
+                if (takenSeats.contains(seatName)) {
+                    seat.setBackground(Color.GRAY);
+                    seat.setForeground(Color.WHITE);
+                    seat.setEnabled(false);
+                } else if (wheelchairSeats.contains(seatName)) {
+                    seat.setBackground(new Color(255, 165, 0)); // Orange for PWD
+                    seat.setForeground(Color.BLACK);
+                    seat.setToolTipText("PWD/Wheelchair seat");
+                    styleSeat(seat); // keep it selectable if needed
+                } else {
+                    seat.setBackground(new Color(0, 150, 170));
+                    seat.setForeground(Color.BLACK);
+                    styleSeat(seat);
+                }
 
-            } else {
-
-                seat.setBackground(new Color(0, 150, 170));
-                seat.setForeground(Color.BLACK);
-
-                styleSeat(seat);
+                seatPanel.add(seat);
             }
-
-            seatPanel.add(seat);
+            rowChar++; // Next row
         }
 
         right.add(seatPanel, BorderLayout.CENTER);
 
+        // Buttons panel
         JPanel buttons = new JPanel();
         buttons.setBackground(new Color(80, 0, 0));
 
@@ -204,19 +218,36 @@ public class Bookmovie extends BaseFrame {
 
             String seatName = seat.getText();
 
+            boolean isWheelchair = wheelchairSeats.contains(seatName);
+
             if (selectedSeats.contains(seatName)) {
-
-                seat.setBackground(new Color(0, 150, 170));
-                seat.setForeground(Color.BLACK);
-
+                // Deselect seat
                 selectedSeats.remove(seatName);
 
-            } else {
+                if (isWheelchair) {
+                    // Revert to orange for PWD seats when deselected
+                    seat.setBackground(new Color(255, 165, 0)); // Orange
+                    seat.setForeground(Color.BLACK);
+                } else {
+                    // Revert to normal blue for regular seats when deselected
+                    seat.setBackground(new Color(0, 150, 170));
+                    seat.setForeground(Color.BLACK);
+                }
 
-                seat.setBackground(Color.YELLOW);
-                seat.setForeground(Color.BLACK);
+            } else {
+                // Selecting seat
+                if (isWheelchair) {
+                    JOptionPane.showMessageDialog(
+                            this,
+                            "This seat is reserved to accommodate persons with disabilities, and we kindly ask for your understanding.",
+                            "Seat Selection Notice",
+                            JOptionPane.INFORMATION_MESSAGE
+                    );
+                }
 
                 selectedSeats.add(seatName);
+                seat.setBackground(Color.YELLOW);
+                seat.setForeground(Color.BLACK);
             }
 
             updateTotal();
@@ -275,6 +306,8 @@ public class Bookmovie extends BaseFrame {
     }
 
     private void loadTakenSeats() {
+
+        takenSeats.clear();
 
         try {
             Connection con = DriverManager.getConnection("jdbc:sqlite:mtb.db");
