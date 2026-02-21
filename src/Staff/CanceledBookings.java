@@ -121,6 +121,7 @@ public class CanceledBookings extends BaseFrame {
 
         // ================= TABLE =================
         cancelledTable = new JTable();
+        cancelledTable.getTableHeader().setReorderingAllowed(false);
         JScrollPane scrollPane = new JScrollPane(cancelledTable);
         scrollPane.setBounds(20, 150, 900, 330);
         add(scrollPane);

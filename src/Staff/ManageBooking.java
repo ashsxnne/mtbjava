@@ -38,7 +38,7 @@ public class ManageBooking extends BaseFrame {
         navbar.add(title);
 
         JButton logoutBtn = new JButton("Logout");
-        logoutBtn.setBounds(860, 10, 80, 40);
+        logoutBtn.setBounds(870, 10, 80, 40);
         logoutBtn.setBackground(Color.WHITE);
         logoutBtn.setForeground(Color.RED);
         logoutBtn.setFocusPainted(false);
@@ -53,18 +53,21 @@ public class ManageBooking extends BaseFrame {
 
         cancelBtn.addActionListener(e -> cancelBooking());
 
-        // SAME STYLE AS ManageTransaction
         JButton manageArchiveBtn = new JButton("Archive Bookings");
-        manageArchiveBtn.setBounds(350, 10, 180, 40);
+        manageArchiveBtn.setBounds(260, 10, 140, 40);
+
+        JButton manageCanceledBtn = new JButton("Canceled Bookings");
+        manageCanceledBtn.setBounds(410, 10, 150, 40);
 
         JButton manageBookingsBtn = new JButton("Manage Bookings");
-        manageBookingsBtn.setBounds(540, 10, 150, 40);
+        manageBookingsBtn.setBounds(570, 10, 140, 40);
 
         JButton manageTransactionsBtn = new JButton("Manage Transactions");
-        manageTransactionsBtn.setBounds(710, 10, 180, 40);
+        manageTransactionsBtn.setBounds(720, 10, 150, 40);
 
         for (JButton btn : new JButton[]{
             manageArchiveBtn,
+            manageCanceledBtn,
             manageBookingsBtn,
             manageTransactionsBtn}) {
 
@@ -77,19 +80,28 @@ public class ManageBooking extends BaseFrame {
         add(navbar);
 
         // ================= NAVBAR ACTIONS =================
+        // MANAGE BOOKINGS (refresh same page)
         manageBookingsBtn.addActionListener(e -> {
             dispose();
             new ManageBooking().showBookingTable();
         });
 
+        // ARCHIVE BOOKINGS
+        manageArchiveBtn.addActionListener(e -> {
+            dispose();
+            new ArchiveBookings().showArchiveTable();
+        });
+
+        // CANCELED BOOKINGS
+        manageCanceledBtn.addActionListener(e -> {
+            dispose();
+            new CanceledBookings().showCanceledTable();
+        });
+
+        // MANAGE TRANSACTIONS
         manageTransactionsBtn.addActionListener(e -> {
             dispose();
             new ManageTransaction().showTransactionTable();
-        });
-
-        manageArchiveBtn.addActionListener(e -> {
-            dispose();
-            new CanceledBookings().showCanceledTable();
         });
 
         logoutBtn.addActionListener(e -> {
