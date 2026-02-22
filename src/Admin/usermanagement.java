@@ -8,6 +8,7 @@ package Admin;
 import CRUD.ActionButtonEditor;
 import CRUD.ActionButtonRenderer;
 import KiosksPages.HomeK;
+import Main.Login;
 import config.Session;
 import design.BaseFrame;
 import java.awt.Color;
@@ -214,6 +215,7 @@ public class usermanagement extends BaseFrame {
         jPanel7.setBackground(new java.awt.Color(200, 0, 0));
 
         jLabel26.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        jLabel26.setForeground(new java.awt.Color(255, 255, 255));
         jLabel26.setText("Dashboard");
         jLabel26.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -222,6 +224,7 @@ public class usermanagement extends BaseFrame {
         });
 
         jLabel27.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        jLabel27.setForeground(new java.awt.Color(255, 255, 255));
         jLabel27.setText("Log out");
         jLabel27.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -230,6 +233,7 @@ public class usermanagement extends BaseFrame {
         });
 
         jLabel28.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        jLabel28.setForeground(new java.awt.Color(255, 255, 255));
         jLabel28.setText("Movies");
         jLabel28.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -238,6 +242,7 @@ public class usermanagement extends BaseFrame {
         });
 
         jLabel29.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        jLabel29.setForeground(new java.awt.Color(255, 255, 255));
         jLabel29.setText("Bookings ");
         jLabel29.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -246,6 +251,7 @@ public class usermanagement extends BaseFrame {
         });
 
         jLabel30.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        jLabel30.setForeground(new java.awt.Color(255, 255, 255));
         jLabel30.setText("Users");
         jLabel30.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -254,6 +260,7 @@ public class usermanagement extends BaseFrame {
         });
 
         jLabel31.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        jLabel31.setForeground(new java.awt.Color(255, 255, 255));
         jLabel31.setText("Transactions");
         jLabel31.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -408,11 +415,13 @@ public class usermanagement extends BaseFrame {
         );
 
         if (confirm == JOptionPane.YES_OPTION) {
-            // User confirmed logout
-            HomeK HomeK = new HomeK();
-            HomeK.setVisible(true);
-            HomeK.pack();
-            HomeK.setLocationRelativeTo(null);
+
+            Session.logout();   // IMPORTANT
+
+            Login login = new Login();
+            login.setVisible(true);
+            login.pack();
+            login.setLocationRelativeTo(null);
             this.dispose();
         }
     }//GEN-LAST:event_jLabel27MouseClicked

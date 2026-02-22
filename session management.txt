@@ -20,6 +20,9 @@ public static void main(String args[]) {
         });
     }
 
+
+
+
 for image ni not session for BLOB adding movie picture
 
 byte[] imgBytes = rs.getBytes("poster");

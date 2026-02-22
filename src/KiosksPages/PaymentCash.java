@@ -127,9 +127,10 @@ public class PaymentCash extends BaseFrame {
             con.setAutoCommit(false);  // 🔥 important for safety
 
 // ================= INSERT BOOKING FIRST =================
-            String bookingSql = "INSERT INTO tbl_booking "
-                    + "(m_id, seat_no, booking_fee, poster) "
-                    + "VALUES (?, ?, ?, ?)";
+            String bookingSql
+                    = "INSERT INTO tbl_booking "
+                    + "(m_id, seat_no, booking_fee, poster, booking_status) "
+                    + "VALUES (?, ?, ?, ?, ?)";
 
             PreparedStatement bookingPst
                     = con.prepareStatement(bookingSql, Statement.RETURN_GENERATED_KEYS);
@@ -138,6 +139,7 @@ public class PaymentCash extends BaseFrame {
             bookingPst.setString(2, seats);
             bookingPst.setInt(3, totalAmount);
             bookingPst.setBytes(4, posterBytes);
+            bookingPst.setString(5, "ONGOING");
 
             bookingPst.executeUpdate();
 
@@ -148,7 +150,7 @@ public class PaymentCash extends BaseFrame {
                 bookingId = rs.getInt(1);
             }
 
-       // ================= INSERT TRANSACTION ================= \\
+            // ================= INSERT TRANSACTION ================= \\
             String transSql = "INSERT INTO tbl_transaction "
                     + "(b_id, booking_fee, payment_status, payment_date, "
                     + "payment_method, cash, change, total_amount) "
@@ -159,7 +161,7 @@ public class PaymentCash extends BaseFrame {
             transPst.setInt(1, bookingId);
             transPst.setInt(2, totalAmount);
 
-          // 🔥 SAVE AS PENDING, NOT PAID
+            // 🔥 SAVE AS PENDING, NOT PAID
             transPst.setString(3, "PENDING");
 
             transPst.setString(4, "CASH");
