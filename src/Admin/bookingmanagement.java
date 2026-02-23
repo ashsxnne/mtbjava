@@ -96,7 +96,7 @@ public class bookingmanagement extends BaseFrame {
                 + "m_id AS 'Movie ID', "
                 + "seat_no AS 'Seat No', "
                 + "booking_fee AS 'Booking Fee', "
-                + "status AS 'Status' "
+                + "booking_status AS 'Status' "
                 + "FROM tbl_booking";
 
         db.displayData(sql, movietable);
