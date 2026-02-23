@@ -103,11 +103,12 @@ public class moviemanagement extends javax.swing.JFrame {
         fixTableLayout();
 
         // ===== FIXED: Use jTextField1 instead of textField1 =====
-        jTextField1.setText("Search users...");
+        jTextField1.setText("");
         jTextField1.setForeground(Color.GRAY);
         jTextField1.setFont(new Font("Segoe UI", Font.PLAIN, 18));
 
         jTextField1.addFocusListener(new java.awt.event.FocusAdapter() {
+
             @Override
             public void focusGained(java.awt.event.FocusEvent evt) {
                 if (jTextField1.getText().equals("Search users...")) {
@@ -520,10 +521,12 @@ public class moviemanagement extends javax.swing.JFrame {
                 return types [columnIndex];
             }
         });
-        movietable.setColumnSelectionAllowed(true);
+        movietable.setCellSelectionEnabled(false);
         movietable.setGridColor(new java.awt.Color(255, 255, 255));
+        movietable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        movietable.getTableHeader().setReorderingAllowed(false);
         jScrollPane1.setViewportView(movietable);
-        movietable.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+        movietable.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -556,7 +559,7 @@ public class moviemanagement extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 318, Short.MAX_VALUE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 384, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());

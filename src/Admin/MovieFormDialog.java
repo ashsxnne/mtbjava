@@ -17,7 +17,7 @@ public class MovieFormDialog extends JDialog {
     );
 
     private JComboBox<String> cmbStatus = new JComboBox<>(
-            new String[]{"NOW SHOWING", "UPCOMING", "Ended"}
+            new String[]{"NOWSHOWING", "UPCOMING", "Ended"}
     );
 
     private JTextArea txtDescription = new JTextArea(3, 20);
