@@ -10,10 +10,10 @@ public class app {
     
     // ================= APP START =================
     public static void main(String[] args) {
-        HomeK HomeK = new HomeK();
-        HomeK.setVisible(true);
-        HomeK.pack();
-        HomeK.setLocationRelativeTo(null);
+        mainlanding mainlanding = new mainlanding();
+        mainlanding.setVisible(true);
+        mainlanding.pack();
+        mainlanding.setLocationRelativeTo(null);
     }
     
 }

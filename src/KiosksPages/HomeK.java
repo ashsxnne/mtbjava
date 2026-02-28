@@ -5,6 +5,7 @@
  */
 package KiosksPages;
 
+import Main.mainlanding;
 import MoviePage.Nowshowing;
 import design.BaseFrame;
 import java.awt.Color;
@@ -32,6 +33,7 @@ public class HomeK extends BaseFrame {
         image2 = new javax.swing.JLabel();
         poster2 = new javax.swing.JLabel();
         btnStart = new javax.swing.JButton();
+        Backbutton = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -61,19 +63,33 @@ public class HomeK extends BaseFrame {
             }
         });
 
+        Backbutton.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        Backbutton.setText("Back");
+        Backbutton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                BackbuttonMouseClicked(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap(272, Short.MAX_VALUE)
+                .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 399, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(26, 26, 26))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(btnStart)
-                        .addGap(76, 76, 76)))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(0, 260, Short.MAX_VALUE)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 399, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(26, 26, 26))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addComponent(btnStart)
+                                .addGap(76, 76, 76))))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(Backbutton, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addComponent(poster2, javax.swing.GroupLayout.PREFERRED_SIZE, 249, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel1Layout.createSequentialGroup()
@@ -83,7 +99,9 @@ public class HomeK extends BaseFrame {
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(92, 92, 92)
+                .addContainerGap()
+                .addComponent(Backbutton, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(44, 44, 44)
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 302, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(47, 47, 47)
                 .addComponent(btnStart, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -127,6 +145,14 @@ public class HomeK extends BaseFrame {
         btnStart.setForeground(new java.awt.Color(200, 0, 0));
     }//GEN-LAST:event_btnStartMouseExited
 
+    private void BackbuttonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_BackbuttonMouseClicked
+        mainlanding mainLandingFrame = new mainlanding();   // or your main frame
+        mainLandingFrame.setVisible(true);
+        mainLandingFrame.pack();
+        mainLandingFrame.setLocationRelativeTo(null);
+        this.dispose();
+    }//GEN-LAST:event_BackbuttonMouseClicked
+
     /**
      * @param args the command line arguments
      */
@@ -164,6 +190,7 @@ public class HomeK extends BaseFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel Backbutton;
     private javax.swing.JButton btnStart;
     private javax.swing.JLabel image2;
     private javax.swing.JLabel jLabel1;

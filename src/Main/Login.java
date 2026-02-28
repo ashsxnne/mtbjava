@@ -46,6 +46,7 @@ public class Login extends BaseFrame {
         jLabel6 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
+        Backbutton = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -147,6 +148,16 @@ public class Login extends BaseFrame {
         jPanel2.add(jLabel7);
         jLabel7.setBounds(20, 90, 380, 320);
 
+        Backbutton.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        Backbutton.setText("Back");
+        Backbutton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                BackbuttonMouseClicked(evt);
+            }
+        });
+        jPanel2.add(Backbutton);
+        Backbutton.setBounds(20, 10, 60, 30);
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -223,6 +234,14 @@ public class Login extends BaseFrame {
 
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    private void BackbuttonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_BackbuttonMouseClicked
+        mainlanding mainLandingFrame = new mainlanding();   // or your main frame
+        mainLandingFrame.setVisible(true);
+        mainLandingFrame.pack();
+        mainLandingFrame.setLocationRelativeTo(null);
+        this.dispose();
+    }//GEN-LAST:event_BackbuttonMouseClicked
+
     /**
      * @param args the command line arguments
      */
@@ -260,6 +279,7 @@ public class Login extends BaseFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel Backbutton;
     private javax.swing.JPanel Left;
     private javax.swing.JTextField blank;
     private javax.swing.JButton jButton1;

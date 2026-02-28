@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package Admin;
 
 import KiosksPages.HomeK;
@@ -86,6 +81,7 @@ public class bookingmanagement extends BaseFrame {
         styleButton(archivebookingbtn, archiveBlue, archiveHover);
 
         setupTableDesign();
+
     }
 
     public void loadBookings() {
@@ -101,7 +97,6 @@ public class bookingmanagement extends BaseFrame {
 
         db.displayData(sql, movietable);
 
-        // Initialize row sorter for search
         DefaultTableModel model = (DefaultTableModel) movietable.getModel();
         rowSorter = new TableRowSorter<>(model);
         movietable.setRowSorter(rowSorter);

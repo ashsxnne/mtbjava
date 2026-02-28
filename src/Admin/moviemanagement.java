@@ -19,16 +19,15 @@ import java.sql.SQLException;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
+import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
-/**
- *
- * @author ph2tn
- */
 public class moviemanagement extends javax.swing.JFrame {
 
     private config db = new config(); // make db available to all methods
+    private int selectedRow = -1; // Track selected row index
+    private int selectedMovieId = -1; // Track selected movie ID
 
     public moviemanagement() {
         initComponents();
@@ -47,32 +46,8 @@ public class moviemanagement extends javax.swing.JFrame {
             login.setLocationRelativeTo(null);
 
             this.dispose();
-            return; // STOP constructor
+            return;
         }
-
-        jTextField1.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
-
-            public void insertUpdate(javax.swing.event.DocumentEvent e) {
-                search();
-            }
-
-            public void removeUpdate(javax.swing.event.DocumentEvent e) {
-                search();
-            }
-
-            public void changedUpdate(javax.swing.event.DocumentEvent e) {
-                search();
-            }
-
-            private void search() {
-                String text = jTextField1.getText().trim();
-                if (text.isEmpty()) {
-                    loadMovies();
-                } else {
-                    filterMovies(text);
-                }
-            }
-        });
 
         // ✅ SET MODEL FIRST
         movietable.setModel(new javax.swing.table.DefaultTableModel(
@@ -95,23 +70,69 @@ public class moviemanagement extends javax.swing.JFrame {
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return false; // table is read-only
             }
-
         });
 
+        // Configure table selection - THIS IS KEY
+        movietable.setRowSelectionAllowed(true);
+        movietable.setColumnSelectionAllowed(false);
+        movietable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+
+        // Add selection listener to track selected row
+        movietable.getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) {
+                selectedRow = movietable.getSelectedRow();
+                if (selectedRow != -1) {
+                    // Convert view row to model row in case of sorting/filtering
+                    int modelRow = movietable.convertRowIndexToModel(selectedRow);
+                    selectedMovieId = Integer.parseInt(movietable.getModel().getValueAt(modelRow, 0).toString());
+                }
+            }
+        });
+
+        // Add double-click to unselect (optional)
+        movietable.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                if (evt.getClickCount() == 2) {
+                    // Double-click - clear selection
+                    movietable.clearSelection();
+                    selectedRow = -1;
+                    selectedMovieId = -1;
+                }
+            }
+        });
+
+        // Load initial data
         loadMovies();
         stylemovietable();
         fixTableLayout();
 
-        // ===== FIXED: Use jTextField1 instead of textField1 =====
+        // ===== FIXED: Search field setup =====
         jTextField1.setText("");
         jTextField1.setForeground(Color.GRAY);
         jTextField1.setFont(new Font("Segoe UI", Font.PLAIN, 18));
 
-        jTextField1.addFocusListener(new java.awt.event.FocusAdapter() {
+        // Add key listener for live search
+        jTextField1.addKeyListener(new java.awt.event.KeyAdapter() {
+            @Override
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                String text = jTextField1.getText().trim();
+                if (text.isEmpty()) {
+                    loadMovies();  // reload all when empty
+                    // Restore selection after reload
+                    if (selectedMovieId != -1) {
+                        restoreSelection();
+                    }
+                } else {
+                    filterMovies(text);
+                }
+            }
+        });
 
+        jTextField1.addFocusListener(new java.awt.event.FocusAdapter() {
             @Override
             public void focusGained(java.awt.event.FocusEvent evt) {
-                if (jTextField1.getText().equals("Search users...")) {
+                if (jTextField1.getText().equals("Search movies...")) {
                     jTextField1.setText("");
                     jTextField1.setForeground(Color.BLACK);
                 }
@@ -120,7 +141,7 @@ public class moviemanagement extends javax.swing.JFrame {
             @Override
             public void focusLost(java.awt.event.FocusEvent evt) {
                 if (jTextField1.getText().isEmpty()) {
-                    jTextField1.setText("Search users...");
+                    jTextField1.setText("Search movies...");
                     jTextField1.setForeground(Color.GRAY);
                 }
             }
@@ -132,10 +153,29 @@ public class moviemanagement extends javax.swing.JFrame {
                 javax.swing.BorderFactory.createLineBorder(new Color(200, 200, 200), 2),
                 javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10)
         ));
+    }
 
+    private void restoreSelection() {
+        if (selectedMovieId != -1) {
+            for (int i = 0; i < movietable.getRowCount(); i++) {
+                int movieId = Integer.parseInt(movietable.getValueAt(i, 0).toString());
+                if (movieId == selectedMovieId) {
+                    movietable.setRowSelectionInterval(i, i);
+                    break;
+                }
+            }
+        }
     }
 
     private void filterMovies(String keyword) {
+        // Save current selection
+        int previousSelectedId = selectedMovieId;
+
+        // Don't filter if keyword is empty
+        if (keyword.isEmpty() || keyword.equals("Search movies...")) {
+            loadMovies();
+            return;
+        }
 
         DefaultTableModel model = (DefaultTableModel) movietable.getModel();
         model.setRowCount(0);
@@ -163,8 +203,22 @@ public class moviemanagement extends javax.swing.JFrame {
                     rs.getString("genre"),
                     rs.getString("show_time"),
                     rs.getInt("available_seats"),
-                    rs.getString("run_time"),};
+                    rs.getString("run_time")
+                };
                 model.addRow(row);
+            }
+
+            // Restore selection after filtering
+            if (previousSelectedId != -1) {
+                for (int i = 0; i < model.getRowCount(); i++) {
+                    if (Integer.parseInt(model.getValueAt(i, 0).toString()) == previousSelectedId) {
+                        final int rowToSelect = i;
+                        SwingUtilities.invokeLater(() -> {
+                            movietable.setRowSelectionInterval(rowToSelect, rowToSelect);
+                        });
+                        break;
+                    }
+                }
             }
 
         } catch (SQLException e) {
@@ -216,11 +270,13 @@ public class moviemanagement extends javax.swing.JFrame {
     }
 
     public void loadMovies() {
+        // Save current selection before reloading
+        int previousSelectedId = selectedMovieId;
 
         DefaultTableModel model = (DefaultTableModel) movietable.getModel();
         model.setRowCount(0);
 
-        String sql = "SELECT * FROM tbl_movies";
+        String sql = "SELECT * FROM tbl_movies ORDER BY m_id";
 
         try (Connection con = DriverManager.getConnection("jdbc:sqlite:mtb.db");
                 PreparedStatement pst = con.prepareStatement(sql);
@@ -233,7 +289,21 @@ public class moviemanagement extends javax.swing.JFrame {
                     rs.getString("genre"),
                     rs.getString("show_time"),
                     rs.getInt("available_seats"),
-                    rs.getString("run_time"),});
+                    rs.getString("run_time")
+                });
+            }
+
+            // Restore selection after loading
+            if (previousSelectedId != -1) {
+                for (int i = 0; i < model.getRowCount(); i++) {
+                    if (Integer.parseInt(model.getValueAt(i, 0).toString()) == previousSelectedId) {
+                        final int rowToSelect = i;
+                        SwingUtilities.invokeLater(() -> {
+                            movietable.setRowSelectionInterval(rowToSelect, rowToSelect);
+                        });
+                        break;
+                    }
+                }
             }
 
         } catch (SQLException e) {
@@ -650,10 +720,11 @@ public class moviemanagement extends javax.swing.JFrame {
     }//GEN-LAST:event_addmovieMouseClicked
 
     private void updatemovieMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_updatemovieMouseClicked
-
         int row = movietable.getSelectedRow();
         if (row >= 0) {
-            editMovieAction(row);
+            // Convert view row to model row in case of filtering
+            int modelRow = movietable.convertRowIndexToModel(row);
+            editMovieAction(modelRow);
         } else {
             JOptionPane.showMessageDialog(this, "Select a movie first!");
         }
@@ -664,7 +735,9 @@ public class moviemanagement extends javax.swing.JFrame {
 
         int row = movietable.getSelectedRow();
         if (row >= 0) {
-            deleteMovieAction(row);
+            // Convert view row to model row in case of filtering
+            int modelRow = movietable.convertRowIndexToModel(row);
+            deleteMovieAction(modelRow);
         } else {
             JOptionPane.showMessageDialog(this, "Select a movie first!");
         }
