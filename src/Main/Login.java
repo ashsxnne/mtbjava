@@ -200,6 +200,7 @@ public class Login extends BaseFrame {
 
         config cfg = new config();
         config.LoginResult result = cfg.loginUserDetailed(email, password);
+        
 
         if (result == null) {
             JOptionPane.showMessageDialog(this, "Invalid email or password!");
@@ -214,6 +215,8 @@ public class Login extends BaseFrame {
 
         // Set session
         Session.userEmail = result.email;
+        
+        cfg.addLog(result.email, result.userType, "Logged in");
 
         // Open dashboard based on user type
         if (result.userType.equalsIgnoreCase("Admin")) {

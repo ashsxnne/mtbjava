@@ -232,16 +232,22 @@
                   <Font name="Segoe UI" size="18" style="0"/>
                 </Property>
                 <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                  <Table columnCount="5" rowCount="4">
+                  <Table columnCount="6" rowCount="4">
                     <Column editable="true" title="Booking ID" type="java.lang.Integer"/>
-                    <Column editable="true" title="Movie ID" type="java.lang.String"/>
-                    <Column editable="true" title="Seat No" type="java.lang.String"/>
-                    <Column editable="true" title="Booking Fee" type="java.lang.String"/>
-                    <Column editable="true" title="Status" type="java.lang.Integer"/>
+                    <Column editable="true" title="Movie ID" type="java.lang.Integer"/>
+                    <Column editable="true" title="Seats" type="java.lang.String"/>
+                    <Column editable="true" title="Total" type="java.lang.Double"/>
+                    <Column editable="true" title="Status" type="java.lang.String"/>
+                    <Column editable="true" title="Date" type="java.lang.String"/>
                   </Table>
                 </Property>
                 <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
                   <TableColumnModel selectionModel="2">
+                    <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                      <Title/>
+                      <Editor/>
+                      <Renderer/>
+                    </Column>
                     <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
                       <Title/>
                       <Editor/>

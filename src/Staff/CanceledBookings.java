@@ -37,31 +37,53 @@ public class CanceledBookings extends BaseFrame {
         title.setBounds(20, 10, 300, 40);
         navbar.add(title);
 
+        int btnHeight = 40;
+        int startX = 240; // distance from left edge (after the title)
+        int gap = 10;
+
+// Button widths
+        int archiveBtnWidth = 160;
+        int canceledBtnWidth = 170;
+        int bookingsBtnWidth = 120;
+        int transactionsBtnWidth = 140;
+
+// Archive Bookings
+        JButton manageArchiveBtn = new JButton("Archive Bookings");
+        manageArchiveBtn.setBounds(startX, 10, archiveBtnWidth, btnHeight);
+        navbar.add(manageArchiveBtn);
+
+// Canceled Bookings
+        JButton manageCanceledBtn = new JButton("Canceled Bookings");
+        manageCanceledBtn.setBounds(startX + archiveBtnWidth + gap, 10, canceledBtnWidth, btnHeight);
+        navbar.add(manageCanceledBtn);
+
+// Bookings
+        JButton manageBookingsBtn = new JButton("Bookings");
+        manageBookingsBtn.setBounds(startX + archiveBtnWidth + canceledBtnWidth + 2 * gap, 10, bookingsBtnWidth, btnHeight);
+        navbar.add(manageBookingsBtn);
+
+// Transactions
+        JButton manageTransactionsBtn = new JButton("Transactions");
+        manageTransactionsBtn.setBounds(startX + archiveBtnWidth + canceledBtnWidth + bookingsBtnWidth + 3 * gap, 10, transactionsBtnWidth, btnHeight);
+        navbar.add(manageTransactionsBtn);
+
+// LOGOUT (always right side)
         JButton logoutBtn = new JButton("Logout");
-        logoutBtn.setBounds(860, 10, 80, 40);
+        logoutBtn.setBounds(860, 10, 80, btnHeight);
         logoutBtn.setBackground(Color.WHITE);
         logoutBtn.setForeground(Color.RED);
         logoutBtn.setFocusPainted(false);
         navbar.add(logoutBtn);
 
-        JButton archiveBtn = new JButton("Archive Bookings");
-        archiveBtn.setBounds(350, 10, 180, 40);
-
-        JButton manageBookingsBtn = new JButton("Manage Bookings");
-        manageBookingsBtn.setBounds(540, 10, 150, 40);
-
-        JButton manageTransactionsBtn = new JButton("Manage Transactions");
-        manageTransactionsBtn.setBounds(710, 10, 180, 40);
-
+// Style all buttons consistently
         for (JButton btn : new JButton[]{
-            archiveBtn,
+            manageArchiveBtn,
+            manageCanceledBtn,
             manageBookingsBtn,
             manageTransactionsBtn}) {
-
             btn.setBackground(Color.WHITE);
             btn.setForeground(Color.BLACK);
             btn.setFocusPainted(false);
-            navbar.add(btn);
         }
 
         add(navbar);
@@ -77,7 +99,7 @@ public class CanceledBookings extends BaseFrame {
             new ManageTransaction().showTransactionTable();
         });
 
-        archiveBtn.addActionListener(e -> {
+        manageArchiveBtn.addActionListener(e -> {
             dispose();
             new ArchiveBookings().showArchiveTable();
         });

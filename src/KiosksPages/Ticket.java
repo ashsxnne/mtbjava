@@ -67,8 +67,8 @@ public class Ticket extends BaseFrame {
 
             // Open HomeK page properly
             HomeK home = new HomeK();
-            home.setVisible(true);      
-            home.setLocationRelativeTo(null);  
+            home.setVisible(true);
+            home.setLocationRelativeTo(null);
         });
 
         receiptPanel.add(proceedBtn);
@@ -84,13 +84,15 @@ public class Ticket extends BaseFrame {
             Connection con = DriverManager.getConnection("jdbc:sqlite:mtb.db");
 
             String sql
-                    = "SELECT b.seat_no, b.booking_fee, "
-                    + "m.movie_name, m.genre, m.run_time, m.rated, m.show_time, "
-                    + "t.cash, t.change "
+                    = "SELECT m.movie_name, m.genre, m.run_time, m.rated, m.show_time, "
+                    + "GROUP_CONCAT(bs.seat_no) AS seats, "
+                    + "t.amount "
                     + "FROM tbl_booking b "
                     + "JOIN tbl_movies m ON b.m_id = m.m_id "
-                    + "JOIN tbl_transaction t ON b.b_id = t.b_id "
-                    + "WHERE b.b_id = ?";
+                    + "JOIN booking_seats bs ON b.b_id = bs.b_id "
+                    + "LEFT JOIN tbl_transactions t ON b.b_id = t.b_id "
+                    + "WHERE b.b_id = ? "
+                    + "GROUP BY b.b_id";
 
             PreparedStatement pst = con.prepareStatement(sql);
             pst.setInt(1, bookingId);
@@ -100,15 +102,13 @@ public class Ticket extends BaseFrame {
             if (rs.next()) {
 
                 String movieName = rs.getString("movie_name");
-                String showTime = rs.getString("show_time"); // now valid
-                String seatNo = rs.getString("seat_no");
+                String showTime = rs.getString("show_time");
+                String seats = rs.getString("seats");
                 String genre = rs.getString("genre");
                 String runtime = rs.getString("run_time");
                 String rated = rs.getString("rated");
 
-                double total = rs.getDouble("booking_fee");
-                double cash = rs.getDouble("cash");
-                double change = rs.getDouble("change");
+                double total = rs.getDouble("amount");
 
                 area.setText(
                         "Movie: " + movieName + "\n\n"
@@ -116,11 +116,9 @@ public class Ticket extends BaseFrame {
                         + "Runtime: " + runtime + "\n"
                         + "Rated: " + rated + "\n\n"
                         + "Show Time: " + showTime + "\n"
-                        + "Seat No: " + seatNo + "\n\n"
+                        + "Seats: " + seats + "\n\n"
                         + "---------------------------------\n"
                         + "Total Amount: ₱" + total + "\n"
-                        + "Cash: ₱" + cash + "\n"
-                        + "Change: ₱" + change + "\n"
                         + "---------------------------------\n\n"
                         + "Enjoy your movie!"
                 );

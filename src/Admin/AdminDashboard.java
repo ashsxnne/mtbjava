@@ -22,6 +22,8 @@ import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -40,6 +42,33 @@ public class AdminDashboard extends BaseFrame {
         setupStatCard(cardMovies, new Color(207, 201, 234), "Movies", "🎬", moviesCount);
 
         loadDashboardCounts();
+        loadActivityLogs();
+    }
+
+    private void loadActivityLogs() {
+        try (Connection conn = config.connectDB()) {
+            String sql = "SELECT u_email AS User, u_type AS Role, activity AS Activity, log_time AS Time "
+                    + "FROM tbl_activity_logs ORDER BY log_time DESC LIMIT 20";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+
+            DefaultTableModel model = new DefaultTableModel();
+            model.setColumnIdentifiers(new Object[]{"User", "Role", "Activity", "Time"});
+
+            while (rs.next()) {
+                model.addRow(new Object[]{
+                    rs.getString("User"),
+                    rs.getString("Role"),
+                    rs.getString("Activity"),
+                    rs.getString("Time")
+                });
+            }
+
+            logsTable.setModel(model);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void setupStatCard(
@@ -181,6 +210,7 @@ public class AdminDashboard extends BaseFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jScrollBar1 = new javax.swing.JScrollBar();
         jPanel1 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
@@ -196,6 +226,8 @@ public class AdminDashboard extends BaseFrame {
         bookingsCount = new javax.swing.JLabel();
         cardMovies = new javax.swing.JPanel();
         moviesCount = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        logsTable = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -354,11 +386,28 @@ public class AdminDashboard extends BaseFrame {
                 .addContainerGap(219, Short.MAX_VALUE))
         );
 
+        logsTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane1.setViewportView(logsTable);
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 891, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(49, 49, 49))
             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel1Layout.createSequentialGroup()
                     .addGap(48, 48, 48)
@@ -373,7 +422,8 @@ public class AdminDashboard extends BaseFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 465, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 366, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel1Layout.createSequentialGroup()
                     .addGap(113, 113, 113)
@@ -481,6 +531,9 @@ public class AdminDashboard extends BaseFrame {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JScrollBar jScrollBar1;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTable logsTable;
     private javax.swing.JLabel moviesCount;
     private javax.swing.JLabel usersCount;
     // End of variables declaration//GEN-END:variables

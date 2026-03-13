@@ -412,4 +412,23 @@ public class config {
         }
     }
 
+    // Activity Logs
+    public void addLog(String email, String type, String activity) {
+
+        String sql = "INSERT INTO tbl_activity_logs (u_email, u_type, activity) VALUES (?, ?, ?)";
+
+        try (Connection conn = connectDB();
+                PreparedStatement pst = conn.prepareStatement(sql)) {
+
+            pst.setString(1, email);
+            pst.setString(2, type);
+            pst.setString(3, activity);
+
+            pst.executeUpdate();
+
+        } catch (SQLException e) {
+            System.out.println("Log error: " + e.getMessage());
+        }
+    }
+
 }

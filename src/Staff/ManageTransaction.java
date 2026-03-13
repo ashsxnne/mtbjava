@@ -7,6 +7,7 @@ import design.BaseFrame;
 import java.awt.*;
 import javax.swing.*;
 import java.sql.*;
+import javax.swing.table.DefaultTableCellRenderer;
 import net.proteanit.sql.DbUtils;
 
 public class ManageTransaction extends BaseFrame {
@@ -36,22 +37,23 @@ public class ManageTransaction extends BaseFrame {
         title.setBounds(20, 10, 300, 40);
         navbar.add(title);
 
+        int btnHeight = 40;
+
+        JButton manageArchiveBtn = new JButton("Archive Transactions");
+        manageArchiveBtn.setBounds(240, 10, 180, btnHeight);
+
+        JButton manageBookingsBtn = new JButton("Bookings");
+        manageBookingsBtn.setBounds(430, 10, 120, btnHeight);
+
+        JButton manageTransactionsBtn = new JButton("Transactions");
+        manageTransactionsBtn.setBounds(560, 10, 160, btnHeight);
+
         JButton logoutBtn = new JButton("Logout");
-        logoutBtn.setBounds(860, 10, 80, 40);
+        logoutBtn.setBounds(740, 10, 100, 40); // ✅ moved slightly right
         logoutBtn.setBackground(Color.WHITE);
         logoutBtn.setForeground(Color.RED);
         logoutBtn.setFocusPainted(false);
         navbar.add(logoutBtn);
-
-        // Buttons
-        JButton manageArchiveBtn = new JButton("Archive Transactions");
-        manageArchiveBtn.setBounds(350, 10, 180, 40);
-
-        JButton manageBookingsBtn = new JButton("Manage Bookings");
-        manageBookingsBtn.setBounds(540, 10, 150, 40);
-
-        JButton manageTransactionsBtn = new JButton("Manage Transactions");
-        manageTransactionsBtn.setBounds(710, 10, 180, 40);
 
         for (JButton btn : new JButton[]{manageArchiveBtn, manageBookingsBtn, manageTransactionsBtn}) {
             btn.setBackground(Color.WHITE);
@@ -92,12 +94,13 @@ public class ManageTransaction extends BaseFrame {
             }
         });
 
-        // ================= WELCOME =================
-        JLabel welcomeLabel = new JLabel("Welcome, " + Session.getEmail());
+        // WELCOME LABEL
+        String userName = getUserName(Session.getEmail()); // fetch the name from DB
+        JLabel welcomeLabel = new JLabel("Welcome, " + userName); // keep original casing
         welcomeLabel.setFont(new Font("Segoe UI", Font.PLAIN, 20));
         welcomeLabel.setForeground(Color.BLACK);
-        welcomeLabel.setBounds(20, 70, 400, 30);
-        add(welcomeLabel);
+        welcomeLabel.setBounds(20, 80, 400, 30);
+        super.add(welcomeLabel);
 
         // ================= SEARCH =================
         JLabel searchLabel = new JLabel("Search:");
@@ -117,12 +120,46 @@ public class ManageTransaction extends BaseFrame {
         add(searchBtn);
 
         // ================= TABLE =================
-        transactionTable = new JTable();
+// Make table non-editable
+        transactionTable = new JTable() {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false; // all cells non-editable
+            }
+        };
+        transactionTable.setFont(new Font("Segoe UI", Font.PLAIN, 18)); // data font
+        transactionTable.setRowHeight(30); // row height to fit font
+
+// Put table inside scroll pane
         JScrollPane scrollPane = new JScrollPane(transactionTable);
         scrollPane.setBounds(20, 150, 900, 300);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         add(scrollPane);
 
-        loadTransactions("");
+// Customize table header font and center text
+        transactionTable.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 20));
+        ((DefaultTableCellRenderer) transactionTable.getTableHeader().getDefaultRenderer())
+                .setHorizontalAlignment(SwingConstants.CENTER);
+
+// Center all table cells
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+        transactionTable.setDefaultRenderer(Object.class, centerRenderer);
+
+// Load data
+        loadTransactions(""); // your existing method
+
+// Rename columns after loading
+        transactionTable.getColumnModel().getColumn(0).setHeaderValue("TID");
+        transactionTable.getColumnModel().getColumn(1).setHeaderValue("BID");
+        transactionTable.getColumnModel().getColumn(2).setHeaderValue("Pay Method");
+        transactionTable.getColumnModel().getColumn(3).setHeaderValue("Total Amount");
+        transactionTable.getColumnModel().getColumn(4).setHeaderValue("Transaction Date");
+        transactionTable.getColumnModel().getColumn(5).setHeaderValue("Pay Status");
+
+// Refresh header to apply changes
+        transactionTable.getTableHeader().repaint();
 
         searchBtn.addActionListener(e -> {
             String keyword = searchField.getText().trim();
@@ -131,17 +168,24 @@ public class ManageTransaction extends BaseFrame {
 
         // ================= TOGGLE PAID/PENDING =================
         JButton toggleBtn = new JButton("Toggle PAID/PENDING");
-        toggleBtn.setBounds(600, 110, 200, 25);
+        toggleBtn.setFont(new Font("Segoe UI", Font.PLAIN, 24)); // 24pt font
         toggleBtn.setBackground(new Color(200, 0, 0));
         toggleBtn.setForeground(Color.WHITE);
         toggleBtn.setFocusPainted(false);
+
+// Dynamically center-left: 1/4th of frame width minus half button width
+        int toggleWidth = 300;
+        int toggleHeight = 55;
+        int frameWidth = getWidth();
+        int toggleX = (frameWidth / 4) - (toggleWidth / 2);
+        toggleBtn.setBounds(toggleX, 470, toggleWidth, toggleHeight);
         add(toggleBtn);
 
         toggleBtn.addActionListener(e -> {
             int selectedRow = transactionTable.getSelectedRow();
             if (selectedRow >= 0) {
                 int t_id = Integer.parseInt(transactionTable.getValueAt(selectedRow, 0).toString());
-                String currentStatus = transactionTable.getValueAt(selectedRow, 3).toString();
+                String currentStatus = transactionTable.getValueAt(selectedRow, 5).toString();
                 String newStatus = currentStatus.equalsIgnoreCase("PAID") ? "PENDING" : "PAID";
                 updatePaymentStatus(t_id, newStatus);
                 loadTransactions(searchField.getText().trim());
@@ -150,19 +194,25 @@ public class ManageTransaction extends BaseFrame {
             }
         });
 
-        // ================= MARK AS COMPLETED =================
+// ================= MARK AS COMPLETED =================
         JButton completeBtn = new JButton("Mark as COMPLETED");
-        completeBtn.setBounds(600, 470, 200, 30);
+        completeBtn.setFont(new Font("Segoe UI", Font.PLAIN, 24)); // 24pt font
         completeBtn.setBackground(new Color(0, 128, 0));
         completeBtn.setForeground(Color.WHITE);
         completeBtn.setFocusPainted(false);
+
+// Dynamically center-right: 3/4th of frame width minus half button width
+        int completeWidth = 300;
+        int completeHeight = 55;
+        int completeX = (frameWidth * 3 / 4) - (completeWidth / 2);
+        completeBtn.setBounds(completeX, 470, completeWidth, completeHeight);
         add(completeBtn);
 
         completeBtn.addActionListener(e -> {
             int selectedRow = transactionTable.getSelectedRow();
             if (selectedRow >= 0) {
                 int t_id = Integer.parseInt(transactionTable.getValueAt(selectedRow, 0).toString());
-                String paymentStatus = transactionTable.getValueAt(selectedRow, 3).toString();
+                String paymentStatus = transactionTable.getValueAt(selectedRow, 5).toString();
                 if (paymentStatus.equalsIgnoreCase("PAID")) {
                     archiveTransaction(t_id);
                     loadTransactions(searchField.getText().trim());
@@ -177,11 +227,32 @@ public class ManageTransaction extends BaseFrame {
         setVisible(true);
     }
 
+    // Get user's name from email
+    private String getUserName(String email) {
+        String name = "User"; // default fallback
+        String sql = "SELECT u_name FROM tbl_user WHERE u_email = ?";
+        try (Connection conn = config.connectDB();
+                PreparedStatement pst = conn.prepareStatement(sql)) {
+
+            pst.setString(1, email);
+            try (ResultSet rs = pst.executeQuery()) {
+                if (rs.next()) {
+                    name = rs.getString("u_name");
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Error fetching user name: " + e.getMessage());
+        }
+        return name;
+    }
+
     // ================= LOAD TRANSACTIONS =================
     private void loadTransactions(String keyword) {
-        String sql = "SELECT t_id, b_id, booking_fee, payment_status, payment_date, cash, change, total_amount FROM tbl_transaction";
+        String sql = "SELECT t_id, b_id, payment_method, amount, transaction_date, payment_status FROM tbl_transactions";
         if (!keyword.isEmpty()) {
-            sql += " WHERE CAST(t_id AS TEXT) LIKE ? OR CAST(b_id AS TEXT) LIKE ? OR payment_status LIKE ?";
+            sql += " WHERE CAST(t_id AS TEXT) LIKE ? "
+                    + "OR CAST(b_id AS TEXT) LIKE ? "
+                    + "OR payment_status LIKE ?";
         }
 
         try (Connection conn = config.connectDB();
@@ -205,7 +276,7 @@ public class ManageTransaction extends BaseFrame {
 
     // ================= UPDATE PAYMENT STATUS =================
     private void updatePaymentStatus(int t_id, String status) {
-        String sql = "UPDATE tbl_transaction SET payment_status = ? WHERE t_id = ?";
+        String sql = "UPDATE tbl_transactions SET payment_status = ? WHERE t_id = ?";
         try (Connection conn = config.connectDB();
                 PreparedStatement pst = conn.prepareStatement(sql)) {
 
@@ -221,12 +292,12 @@ public class ManageTransaction extends BaseFrame {
 
     // ================= ARCHIVE METHOD =================
     private void archiveTransaction(int t_id) {
-        String insertSQL = "INSERT INTO tbl_archivetransaction "
-                + "(t_id, b_id, booking_fee, payment_status, payment_date, cash, change, total_amount, completed_at) "
-                + "SELECT t_id, b_id, booking_fee, payment_status, payment_date, cash, change, total_amount, datetime('now') "
-                + "FROM tbl_transaction WHERE t_id = ? AND payment_status = 'PAID'";
+        String insertSQL = "INSERT INTO archive_transactions "
+                + "(t_id, b_id, payment_method, amount, transaction_date, payment_status, archived_date) "
+                + "SELECT t_id, b_id, payment_method, amount, transaction_date, payment_status, datetime('now') "
+                + "FROM tbl_transactions WHERE t_id = ? AND payment_status = 'PAID'";
 
-        String deleteSQL = "DELETE FROM tbl_transaction WHERE t_id = ? AND payment_status = 'PAID'";
+        String deleteSQL = "DELETE FROM tbl_transactions WHERE t_id = ? AND payment_status = 'PAID'";
 
         try (Connection conn = config.connectDB()) {
             conn.setAutoCommit(false);

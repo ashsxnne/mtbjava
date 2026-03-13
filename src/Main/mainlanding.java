@@ -26,6 +26,9 @@ public class mainlanding extends BaseFrame {
         logo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagesicons/mtblogor.png"))); // NOI18N
         logo.setToolTipText("");
 
+        adminlogin.setBackground(new java.awt.Color(255, 255, 255));
+        adminlogin.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        adminlogin.setForeground(new java.awt.Color(200, 0, 0));
         adminlogin.setText("Login");
         adminlogin.setBorderPainted(false);
         adminlogin.setFocusPainted(false);
@@ -36,6 +39,9 @@ public class mainlanding extends BaseFrame {
             }
         });
 
+        kiosk.setBackground(new java.awt.Color(255, 255, 255));
+        kiosk.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        kiosk.setForeground(new java.awt.Color(200, 0, 0));
         kiosk.setText("Kiosk Mode");
         kiosk.setBorderPainted(false);
         kiosk.setFocusPainted(false);
@@ -51,16 +57,14 @@ public class mainlanding extends BaseFrame {
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(96, 96, 96)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(121, 121, 121)
-                        .addComponent(kiosk, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(83, 83, 83)
-                        .addComponent(adminlogin, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(96, 96, 96)
-                        .addComponent(logo)))
-                .addContainerGap(120, Short.MAX_VALUE))
+                        .addComponent(kiosk, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(59, 59, 59)
+                        .addComponent(adminlogin, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(logo))
+                .addContainerGap(105, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -69,8 +73,8 @@ public class mainlanding extends BaseFrame {
                 .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 254, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(79, 79, 79)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(kiosk, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(adminlogin, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(kiosk, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(adminlogin, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(87, 87, 87))
         );
 

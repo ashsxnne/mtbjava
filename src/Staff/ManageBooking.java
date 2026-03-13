@@ -1,11 +1,13 @@
 package Staff;
 
 import Main.Login;
+import config.Session;
 import config.config;
 import design.BaseFrame;
 import java.awt.*;
 import javax.swing.*;
 import java.sql.*;
+import javax.swing.table.DefaultTableCellRenderer;
 import net.proteanit.sql.DbUtils;
 
 public class ManageBooking extends BaseFrame {
@@ -37,13 +39,6 @@ public class ManageBooking extends BaseFrame {
         title.setBounds(20, 10, 300, 40);
         navbar.add(title);
 
-        JButton logoutBtn = new JButton("Logout");
-        logoutBtn.setBounds(870, 10, 80, 40);
-        logoutBtn.setBackground(Color.WHITE);
-        logoutBtn.setForeground(Color.RED);
-        logoutBtn.setFocusPainted(false);
-        navbar.add(logoutBtn);
-
         JButton cancelBtn = new JButton("Cancel Booking");
         cancelBtn.setBounds(150, 470, 200, 30);
         cancelBtn.setBackground(Color.DARK_GRAY);
@@ -53,17 +48,29 @@ public class ManageBooking extends BaseFrame {
 
         cancelBtn.addActionListener(e -> cancelBooking());
 
+        int btnHeight = 40;
+        int startX = 240;
+        int gap = 10;
+
         JButton manageArchiveBtn = new JButton("Archive Bookings");
-        manageArchiveBtn.setBounds(260, 10, 140, 40);
+        manageArchiveBtn.setBounds(startX, 10, 160, btnHeight);
 
         JButton manageCanceledBtn = new JButton("Canceled Bookings");
-        manageCanceledBtn.setBounds(410, 10, 150, 40);
+        manageCanceledBtn.setBounds(startX + 170, 10, 170, btnHeight);
 
-        JButton manageBookingsBtn = new JButton("Manage Bookings");
-        manageBookingsBtn.setBounds(570, 10, 140, 40);
+        JButton manageBookingsBtn = new JButton("Bookings");
+        manageBookingsBtn.setBounds(startX + 350, 10, 120, btnHeight);
 
-        JButton manageTransactionsBtn = new JButton("Manage Transactions");
-        manageTransactionsBtn.setBounds(720, 10, 150, 40);
+        JButton manageTransactionsBtn = new JButton("Transactions");
+        manageTransactionsBtn.setBounds(startX + 480, 10, 140, btnHeight);
+
+        // LOGOUT (always right side)
+        JButton logoutBtn = new JButton("Logout");
+        logoutBtn.setBounds(860, 10, 80, 40);
+        logoutBtn.setBackground(Color.WHITE);
+        logoutBtn.setForeground(Color.RED);
+        logoutBtn.setFocusPainted(false);
+        navbar.add(logoutBtn);
 
         for (JButton btn : new JButton[]{
             manageArchiveBtn,
@@ -118,11 +125,13 @@ public class ManageBooking extends BaseFrame {
             }
         });
 
-        // ================= WELCOME =================
-        JLabel welcomeLabel = new JLabel("Welcome Staff");
+        // WELCOME LABEL
+        String userName = getUserName(Session.getEmail()); // fetch the name from DB
+        JLabel welcomeLabel = new JLabel("Welcome, " + userName); // keep original casing
         welcomeLabel.setFont(new Font("Segoe UI", Font.PLAIN, 20));
-        welcomeLabel.setBounds(20, 70, 400, 30);
-        add(welcomeLabel);
+        welcomeLabel.setForeground(Color.BLACK);
+        welcomeLabel.setBounds(20, 80, 400, 30);
+        super.add(welcomeLabel);
 
         // ================= SEARCH =================
         JLabel searchLabel = new JLabel("Search:");
@@ -142,12 +151,42 @@ public class ManageBooking extends BaseFrame {
         add(searchBtn);
 
         // ================= TABLE =================
-        bookingTable = new JTable();
+        bookingTable = new JTable() {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false; // all cells non-editable
+            }
+        };
+        bookingTable.setFont(new Font("Segoe UI", Font.PLAIN, 14)); // data font size 14
+        bookingTable.setRowHeight(25); // row height to fit font
+
+// Center all table cells
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+        bookingTable.setDefaultRenderer(Object.class, centerRenderer);
+
+// Put table inside scroll pane
         JScrollPane scrollPane = new JScrollPane(bookingTable);
         scrollPane.setBounds(20, 150, 900, 300);
         add(scrollPane);
 
+// Customize table header font and center text
+        bookingTable.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 16));
+        ((DefaultTableCellRenderer) bookingTable.getTableHeader().getDefaultRenderer())
+                .setHorizontalAlignment(SwingConstants.CENTER);
+
         loadBookings("");
+
+        // Rename table columns
+        bookingTable.getColumnModel().getColumn(0).setHeaderValue("BID");
+        bookingTable.getColumnModel().getColumn(1).setHeaderValue("Movie Title");
+        bookingTable.getColumnModel().getColumn(2).setHeaderValue("Seats");
+        bookingTable.getColumnModel().getColumn(3).setHeaderValue("Total Price");
+        bookingTable.getColumnModel().getColumn(4).setHeaderValue("Booking Stat");
+        bookingTable.getColumnModel().getColumn(5).setHeaderValue("Book Date");
+
+// Refresh header to apply changes
+        bookingTable.getTableHeader().repaint();
 
         searchBtn.addActionListener(e -> {
             loadBookings(searchField.getText().trim());
@@ -175,12 +214,37 @@ public class ManageBooking extends BaseFrame {
         setVisible(true);
     }
 
+    // Get user's name from email
+    private String getUserName(String email) {
+        String name = "User"; // default fallback
+        String sql = "SELECT u_name FROM tbl_user WHERE u_email = ?";
+        try (Connection conn = config.connectDB();
+                PreparedStatement pst = conn.prepareStatement(sql)) {
+
+            pst.setString(1, email);
+            try (ResultSet rs = pst.executeQuery()) {
+                if (rs.next()) {
+                    name = rs.getString("u_name");
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Error fetching user name: " + e.getMessage());
+        }
+        return name;
+    }
+
     private void loadBookings(String keyword) {
 
-        String sql = "SELECT b_id, m_id, seat_no, booking_fee, status FROM tbl_booking";
+        String sql = "SELECT b.b_id, m.movie_name, "
+                + "GROUP_CONCAT(s.seat_no, ', ') AS seats, "
+                + "b.total_price, b.booking_status, b.booking_date "
+                + "FROM tbl_booking b "
+                + "JOIN tbl_movies m ON b.m_id = m.m_id "
+                + "LEFT JOIN booking_seats s ON b.b_id = s.b_id "
+                + "GROUP BY b.b_id";
 
         if (!keyword.isEmpty()) {
-            sql += " WHERE CAST(b_id AS TEXT) LIKE ? OR CAST(m_id AS TEXT) LIKE ?";
+            sql += " HAVING CAST(b.b_id AS TEXT) LIKE ? OR m.movie_name LIKE ?";
         }
 
         try (Connection conn = config.connectDB()) {
@@ -223,37 +287,36 @@ public class ManageBooking extends BaseFrame {
         }
 
         int b_id = Integer.parseInt(bookingTable.getValueAt(selectedRow, 0).toString());
-        String currentSeat = bookingTable.getValueAt(selectedRow, 2).toString();
-        String currentFee = bookingTable.getValueAt(selectedRow, 3).toString();
+        String currentPrice = bookingTable.getValueAt(selectedRow, 3).toString();
 
-        JTextField seatField = new JTextField(currentSeat);
-        JTextField feeField = new JTextField(currentFee);
+        JTextField priceField = new JTextField(currentPrice);
 
         Object[] message = {
-            "Seat No:", seatField,
-            "Booking Fee:", feeField
+            "Total Price:", priceField
         };
 
-        int option = JOptionPane.showConfirmDialog(this, message, "Edit Booking",
-                JOptionPane.OK_CANCEL_OPTION);
+        int option = JOptionPane.showConfirmDialog(this, message,
+                "Edit Booking", JOptionPane.OK_CANCEL_OPTION);
 
         if (option == JOptionPane.OK_OPTION) {
-            updateBooking(b_id, seatField.getText(),
-                    Integer.parseInt(feeField.getText()));
+
+            int price = Integer.parseInt(priceField.getText());
+            updateBooking(b_id, price);
+
             loadBookings(searchField.getText().trim());
         }
     }
 
-    private void updateBooking(int b_id, String seatNo, int fee) {
+    private void updateBooking(int b_id, int price) {
 
-        String sql = "UPDATE tbl_booking SET seat_no=?, booking_fee=? WHERE b_id=?";
+        String sql = "UPDATE tbl_booking SET total_price=? WHERE b_id=?";
 
         try (Connection conn = config.connectDB();
                 PreparedStatement pst = conn.prepareStatement(sql)) {
 
-            pst.setString(1, seatNo);
-            pst.setInt(2, fee);
-            pst.setInt(3, b_id);
+            pst.setInt(1, price);
+            pst.setInt(2, b_id);
+
             pst.executeUpdate();
 
             JOptionPane.showMessageDialog(this, "Booking updated!");
@@ -278,16 +341,17 @@ public class ManageBooking extends BaseFrame {
             conn.setAutoCommit(false);
 
             // 1️⃣ Update status to COMPLETED
-            String updateStatusSQL = "UPDATE tbl_booking SET status = 'COMPLETED' WHERE b_id = ?";
+            String updateStatusSQL
+                    = "UPDATE tbl_booking SET booking_status='COMPLETED' WHERE b_id=?";
             try (PreparedStatement pst = conn.prepareStatement(updateStatusSQL)) {
                 pst.setInt(1, b_id);
                 pst.executeUpdate();
             }
 
             // 2️⃣ Move to archive
-            String insertSQL = "INSERT INTO tbl_archivebooking "
-                    + "(b_id, m_id, seat_no, booking_fee, poster, status, booking_completed_at) "
-                    + "SELECT b_id, m_id, seat_no, booking_fee, poster, status, datetime('now') "
+            String insertSQL = "INSERT INTO archive_bookings "
+                    + "(b_id, m_id, total_price, booking_status, booking_date, archived_date) "
+                    + "SELECT b_id, m_id, total_price, booking_status, booking_date, datetime('now') "
                     + "FROM tbl_booking WHERE b_id = ?";
             String deleteSQL = "DELETE FROM tbl_booking WHERE b_id = ?";
 

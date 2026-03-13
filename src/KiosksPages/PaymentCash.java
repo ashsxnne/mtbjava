@@ -129,17 +129,15 @@ public class PaymentCash extends BaseFrame {
 // ================= INSERT BOOKING FIRST =================
             String bookingSql
                     = "INSERT INTO tbl_booking "
-                    + "(m_id, seat_no, booking_fee, poster, booking_status) "
-                    + "VALUES (?, ?, ?, ?, ?)";
+                    + "(m_id, total_price, booking_status, booking_date) "
+                    + "VALUES (?, ?, ?, datetime('now'))";
 
             PreparedStatement bookingPst
                     = con.prepareStatement(bookingSql, Statement.RETURN_GENERATED_KEYS);
 
             bookingPst.setInt(1, movieId);
-            bookingPst.setString(2, seats);
-            bookingPst.setInt(3, totalAmount);
-            bookingPst.setBytes(4, posterBytes);
-            bookingPst.setString(5, "ONGOING");
+            bookingPst.setInt(2, totalAmount);
+            bookingPst.setString(3, "ONGOING");
 
             bookingPst.executeUpdate();
 
@@ -150,24 +148,40 @@ public class PaymentCash extends BaseFrame {
                 bookingId = rs.getInt(1);
             }
 
+            // ================= INSERT SEATS =================
+            String[] seatArray = seats.split(",");
+
+            String seatSql = "INSERT INTO booking_seats (b_id, m_id, seat_no, price) VALUES (?, ?, ?, ?)";
+
+            PreparedStatement seatPst = con.prepareStatement(seatSql);
+
+            for (String seat : seatArray) {
+                seatPst.setInt(1, bookingId);
+                seatPst.setInt(2, movieId);
+                seatPst.setString(3, seat.trim());
+                seatPst.setInt(4, totalAmount / seatArray.length);
+                seatPst.executeUpdate();
+            }
+
+            // ================= UPDATE AVAILABLE SEATS =================
+            String updateSeatsSql = "UPDATE tbl_movies SET available_seats = available_seats - ? WHERE m_id = ?";
+            PreparedStatement updatePst = con.prepareStatement(updateSeatsSql);
+
+            updatePst.setInt(1, seatArray.length); // number of seats booked
+            updatePst.setInt(2, movieId);
+
+            updatePst.executeUpdate();
+
             // ================= INSERT TRANSACTION ================= \\
-            String transSql = "INSERT INTO tbl_transaction "
-                    + "(b_id, booking_fee, payment_status, payment_date, "
-                    + "payment_method, cash, change, total_amount) "
-                    + "VALUES (?, ?, ?, datetime('now'), ?, ?, ?, ?)";
+            String transSql = "INSERT INTO tbl_transactions "
+                    + "(b_id, payment_method, amount, transaction_date) "
+                    + "VALUES (?, ?, ?, datetime('now'))";
 
             PreparedStatement transPst = con.prepareStatement(transSql);
 
             transPst.setInt(1, bookingId);
-            transPst.setInt(2, totalAmount);
-
-            // 🔥 SAVE AS PENDING, NOT PAID
-            transPst.setString(3, "PENDING");
-
-            transPst.setString(4, "CASH");
-            transPst.setInt(5, cash);
-            transPst.setInt(6, change);
-            transPst.setInt(7, totalAmount);
+            transPst.setString(2, "CASH");
+            transPst.setInt(3, totalAmount);
 
             transPst.executeUpdate();
 

@@ -88,12 +88,14 @@ public class bookingmanagement extends BaseFrame {
         config db = new config();
 
         String sql = "SELECT "
-                + "b_id AS 'Booking ID', "
-                + "m_id AS 'Movie ID', "
-                + "seat_no AS 'Seat No', "
-                + "booking_fee AS 'Booking Fee', "
-                + "booking_status AS 'Status' "
-                + "FROM tbl_booking";
+                + "b.b_id AS 'Booking ID', "
+                + "b.m_id AS 'Movie ID', "
+                + "GROUP_CONCAT(s.seat_no) AS 'Seat No', "
+                + "b.total_price AS 'Booking Fee', "
+                + "b.booking_status AS 'Status' "
+                + "FROM tbl_booking b "
+                + "LEFT JOIN booking_seats s ON b.b_id = s.b_id "
+                + "GROUP BY b.b_id";
 
         db.displayData(sql, movietable);
 
@@ -256,17 +258,17 @@ public class bookingmanagement extends BaseFrame {
         movietable.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         movietable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null}
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null}
             },
             new String [] {
-                "Booking ID", "Movie ID", "Seat No", "Booking Fee", "Status"
+                "Booking ID", "Movie ID", "Seats", "Total", "Status", "Date"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class
+                java.lang.Integer.class, java.lang.Integer.class, java.lang.String.class, java.lang.Double.class, java.lang.String.class, java.lang.String.class
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -484,8 +486,7 @@ public class bookingmanagement extends BaseFrame {
         try {
             Connection con = config.connectDB();
 
-            String sql
-                    = "UPDATE tbl_booking SET status='COMPLETED' WHERE b_id=?";
+            String sql = "UPDATE tbl_booking SET booking_status='COMPLETED' WHERE b_id=?";
 
             PreparedStatement pst = con.prepareStatement(sql);
             pst.setInt(1, bookingID);

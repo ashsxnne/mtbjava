@@ -313,22 +313,17 @@ public class Bookmovie extends BaseFrame {
             Connection con = DriverManager.getConnection("jdbc:sqlite:mtb.db");
 
             PreparedStatement pst = con.prepareStatement(
-                    "SELECT seat_no FROM tbl_booking WHERE m_id = ?");
+                    "SELECT seat_no FROM booking_seats WHERE m_id = ?");
             pst.setInt(1, movieId);
 
             ResultSet rs = pst.executeQuery();
 
             while (rs.next()) {
 
-                String seats = rs.getString("seat_no");
+                String seat = rs.getString("seat_no");
 
-                if (seats != null) {
-
-                    String[] seatArray = seats.split(",");
-
-                    for (String s : seatArray) {
-                        takenSeats.add(s.trim());
-                    }
+                if (seat != null) {
+                    takenSeats.add(seat.trim());
                 }
             }
 

@@ -17,6 +17,7 @@ import javax.swing.JOptionPane;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
 
 /**
  *
@@ -30,6 +31,7 @@ public class transactionmanagement extends javax.swing.JFrame {
     public transactionmanagement() {
         initComponents();
         styleButtons();
+        centerTableText();
 
         toggle.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -46,26 +48,51 @@ public class transactionmanagement extends javax.swing.JFrame {
         setupSearch();
     }
 
+    private void centerTableText() {
+
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(javax.swing.JLabel.CENTER);
+
+        for (int i = 0; i < transactiontable.getColumnCount(); i++) {
+            transactiontable.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+        }
+    }
+
     private void loadTransactions() {
 
         DefaultTableModel model = (DefaultTableModel) transactiontable.getModel();
         model.setRowCount(0);
 
+        String sql = "SELECT "
+                + "t.t_id, "
+                + "m.movie_name, "
+                + "GROUP_CONCAT(s.seat_no, ', ') AS seats, "
+                + "t.payment_status, "
+                + "t.transaction_date, "
+                + "t.payment_method, "
+                + "t.amount "
+                + "FROM tbl_transactions t "
+                + "JOIN tbl_booking b ON t.b_id = b.b_id "
+                + "JOIN tbl_movies m ON b.m_id = m.m_id "
+                + "LEFT JOIN booking_seats s ON b.b_id = s.b_id "
+                + "GROUP BY t.t_id, m.movie_name, t.payment_status, t.transaction_date, t.payment_method, t.amount";
+
         try (Connection con = DriverManager.getConnection("jdbc:sqlite:mtb.db");
-                PreparedStatement pst = con.prepareStatement("SELECT * FROM tbl_transaction");
+                PreparedStatement pst = con.prepareStatement(sql);
                 ResultSet rs = pst.executeQuery()) {
 
             while (rs.next()) {
+
                 model.addRow(new Object[]{
                     rs.getInt("t_id"),
-                    rs.getInt("b_id"),
-                    rs.getInt("booking_fee"),
+                    rs.getString("movie_name"),
+                    rs.getString("seats"),
                     rs.getString("payment_status"),
-                    rs.getString("payment_date"),
-                    rs.getInt("cash"),
-                    rs.getInt("change"),
-                    rs.getInt("total_amount")
+                    rs.getString("transaction_date"),
+                    rs.getString("payment_method"),
+                    rs.getInt("amount")
                 });
+
             }
 
         } catch (SQLException e) {
@@ -96,30 +123,46 @@ public class transactionmanagement extends javax.swing.JFrame {
                 DefaultTableModel model = (DefaultTableModel) transactiontable.getModel();
                 model.setRowCount(0);
 
-                String sql = "SELECT * FROM tbl_transaction WHERE "
-                        + "t_id LIKE ? OR b_id LIKE ? OR payment_status LIKE ? "
-                        + "OR payment_date LIKE ? OR total_amount LIKE ?";
+                String sql = "SELECT "
+                        + "t.t_id, "
+                        + "m.movie_name, "
+                        + "GROUP_CONCAT(s.seat_no) AS seats, "
+                        + "t.payment_status, "
+                        + "t.transaction_date, "
+                        + "t.payment_method, "
+                        + "t.amount "
+                        + "FROM tbl_transactions t "
+                        + "JOIN tbl_booking b ON t.b_id = b.b_id "
+                        + "JOIN tbl_movies m ON b.m_id = m.m_id "
+                        + "LEFT JOIN booking_seats s ON b.b_id = s.b_id "
+                        + "WHERE "
+                        + "t.t_id LIKE ? OR "
+                        + "m.movie_name LIKE ? OR "
+                        + "t.payment_method LIKE ? OR "
+                        + "t.transaction_date LIKE ? "
+                        + "GROUP BY t.t_id";
 
                 try (Connection con = DriverManager.getConnection("jdbc:sqlite:mtb.db");
                         PreparedStatement pst = con.prepareStatement(sql)) {
 
-                    for (int i = 1; i <= 5; i++) {
+                    for (int i = 1; i <= 4; i++) {
                         pst.setString(i, "%" + keyword + "%");
                     }
 
                     ResultSet rs = pst.executeQuery();
 
                     while (rs.next()) {
+
                         model.addRow(new Object[]{
                             rs.getInt("t_id"),
-                            rs.getInt("b_id"),
-                            rs.getInt("booking_fee"),
+                            rs.getString("movie_name"),
+                            rs.getString("seats"),
                             rs.getString("payment_status"),
-                            rs.getString("payment_date"),
-                            rs.getInt("cash"),
-                            rs.getInt("change"),
-                            rs.getInt("total_amount")
+                            rs.getString("transaction_date"),
+                            rs.getString("payment_method"),
+                            rs.getInt("amount")
                         });
+
                     }
 
                 } catch (SQLException ex) {
@@ -139,13 +182,19 @@ public class transactionmanagement extends javax.swing.JFrame {
         }
 
         int id = Integer.parseInt(transactiontable.getValueAt(row, 0).toString());
-        String currentStatus = transactiontable.getValueAt(row, 3).toString();
+        String currentStatus = transactiontable.getValueAt(row, 3).toString().trim().toUpperCase();
 
-        String newStatus = currentStatus.equalsIgnoreCase("PAID") ? "PENDING" : "PAID";
+        String newStatus;
+
+        if (currentStatus.equals("PAID")) {
+            newStatus = "PENDING";
+        } else {
+            newStatus = "PAID";
+        }
 
         try (Connection con = DriverManager.getConnection("jdbc:sqlite:mtb.db");
                 PreparedStatement pst = con.prepareStatement(
-                        "UPDATE tbl_transaction SET payment_status=? WHERE t_id=?")) {
+                        "UPDATE tbl_transactions SET payment_status=? WHERE t_id=?")) {
 
             pst.setString(1, newStatus);
             pst.setInt(2, id);
@@ -170,15 +219,44 @@ public class transactionmanagement extends javax.swing.JFrame {
 
         int id = Integer.parseInt(transactiontable.getValueAt(row, 0).toString());
 
-        try (Connection con = DriverManager.getConnection("jdbc:sqlite:mtb.db");
-                PreparedStatement pst = con.prepareStatement(
-                        "UPDATE tbl_transaction SET payment_status='COMPLETED' WHERE t_id=?")) {
+        try (Connection con = DriverManager.getConnection("jdbc:sqlite:mtb.db")) {
 
-            pst.setInt(1, id);
-            pst.executeUpdate();
+            // 1️⃣ Get transaction data
+            String select = "SELECT * FROM tbl_transactions WHERE t_id=?";
+            PreparedStatement pstSelect = con.prepareStatement(select);
+            pstSelect.setInt(1, id);
+            ResultSet rs = pstSelect.executeQuery();
 
-            JOptionPane.showMessageDialog(this, "Transaction marked as COMPLETED");
-            loadTransactions();
+            if (rs.next()) {
+
+                int b_id = rs.getInt("b_id");
+                int amount = rs.getInt("amount");
+                String method = rs.getString("payment_method");
+                String date = rs.getString("transaction_date");
+
+                // 2️⃣ Insert into archive table
+                String insert = "INSERT INTO archive_transactions "
+                        + "(t_id, b_id, amount, payment_method, transaction_date, archived_date) "
+                        + "VALUES (?,?,?,?,?,datetime('now'))";
+
+                PreparedStatement pstInsert = con.prepareStatement(insert);
+                pstInsert.setInt(1, id);
+                pstInsert.setInt(2, b_id);
+                pstInsert.setInt(3, amount);
+                pstInsert.setString(4, method);
+                pstInsert.setString(5, date);
+                pstInsert.executeUpdate();
+
+                // 3️⃣ Delete from main table
+                String delete = "DELETE FROM tbl_transactions WHERE t_id=?";
+                PreparedStatement pstDelete = con.prepareStatement(delete);
+                pstDelete.setInt(1, id);
+                pstDelete.executeUpdate();
+
+                JOptionPane.showMessageDialog(this, "Transaction archived successfully!");
+
+                loadTransactions();
+            }
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -359,17 +437,17 @@ public class transactionmanagement extends javax.swing.JFrame {
         transactiontable.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         transactiontable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null}
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null}
             },
             new String [] {
-                "Transaction ID", "Booking ID", "Booking Fee", "Payment Status", "Payment Date", "Cash", "Change", "Total Amount"
+                "Transaction ID", "Movie", "Seats", "Payment Status", "Transaction Date", "Payment Method", "Total Amount"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -435,8 +513,8 @@ public class transactionmanagement extends javax.swing.JFrame {
                 .addGap(20, 20, 20)
                 .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 325, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(21, 21, 21))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(251, 251, 251))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -538,7 +616,6 @@ public class transactionmanagement extends javax.swing.JFrame {
     /**
      * @param args the command line arguments
      */
-    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel archivetransaction;
