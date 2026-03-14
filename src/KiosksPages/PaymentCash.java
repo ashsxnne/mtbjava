@@ -68,7 +68,7 @@ public class PaymentCash extends BaseFrame {
         add(totalField);
 
         // CASH
-        JLabel cashLbl = new JLabel("Cash:");
+        JLabel cashLbl = new JLabel("Cash Received:");
         cashLbl.setForeground(softWhite);
         cashLbl.setFont(new Font("Arial", Font.BOLD, 18));
         cashLbl.setBounds(300, 240, 150, 30);
@@ -101,7 +101,10 @@ public class PaymentCash extends BaseFrame {
         payBtn.setFont(new Font("Arial", Font.BOLD, 16));
         payBtn.setFocusPainted(false);
 
-        payBtn.addActionListener(e -> processPayment());
+        payBtn.addActionListener(e -> {
+            payBtn.setEnabled(false);
+            processPayment();
+        });
 
         add(payBtn);
     }
@@ -110,7 +113,7 @@ public class PaymentCash extends BaseFrame {
 
         try {
 
-            int cash = Integer.parseInt(cashField.getText());
+            int cash = Integer.parseInt(cashField.getText().replaceAll("[^0-9]", ""));
 
             if (cash < totalAmount) {
                 JOptionPane.showMessageDialog(this, "Insufficient Cash!");
@@ -174,8 +177,8 @@ public class PaymentCash extends BaseFrame {
 
             // ================= INSERT TRANSACTION ================= \\
             String transSql = "INSERT INTO tbl_transactions "
-                    + "(b_id, payment_method, amount, transaction_date) "
-                    + "VALUES (?, ?, ?, datetime('now'))";
+                    + "(b_id, payment_method, amount, payment_status, transaction_date) "
+                    + "VALUES (?, ?, ?, 'PENDING', datetime('now'))";
 
             PreparedStatement transPst = con.prepareStatement(transSql);
 

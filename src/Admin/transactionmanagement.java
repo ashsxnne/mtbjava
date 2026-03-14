@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package Admin;
 
 import KiosksPages.HomeK;
@@ -19,15 +15,10 @@ import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 
-/**
- *
- * @author ph2tn
- */
+
 public class transactionmanagement extends javax.swing.JFrame {
 
-    /**
-     * Creates new form transactionmanagement1
-     */
+    
     public transactionmanagement() {
         initComponents();
         styleButtons();
@@ -613,9 +604,7 @@ public class transactionmanagement extends javax.swing.JFrame {
 
     }//GEN-LAST:event_jLabel10MouseClicked
 
-    /**
-     * @param args the command line arguments
-     */
+    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel archivetransaction;

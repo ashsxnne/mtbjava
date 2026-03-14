@@ -6,7 +6,7 @@
 package Main;
 
 import Admin.AdminDashboard;
-import Staff.StaffDash;
+import Staff.StaffDashboard;
 import config.Session;
 import config.config;
 import design.BaseFrame;
@@ -227,7 +227,7 @@ public class Login extends BaseFrame {
             this.dispose();
 
         } else if (result.userType.equalsIgnoreCase("Staff")) {
-            StaffDash staff = new StaffDash();
+            StaffDashboard staff = new StaffDashboard();
             staff.startStaffSession();  // Staff workflow
             this.dispose();
 

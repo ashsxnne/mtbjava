@@ -54,25 +54,33 @@ public class Transaction extends BaseFrame {
         // CASH / COUNTER Panel
         JPanel cashPanel = new JPanel();
         cashPanel.setLayout(new BorderLayout());
-        cashPanel.setBounds(120, 180, 300, 200);
+        cashPanel.setBounds(323, 180, 300, 200);
         cashPanel.setBackground(softWhite);
         cashPanel.setBorder(BorderFactory.createLineBorder(accentRed, 4));
 
-        JLabel cashLabel = new JLabel("CASH / COUNTER", SwingConstants.CENTER);
+        JLabel cashLabel = new JLabel("PAY CASH", SwingConstants.CENTER);
         cashLabel.setFont(new Font("Arial", Font.BOLD, 22));
         cashLabel.setForeground(accentRed);
         cashPanel.add(cashLabel, BorderLayout.CENTER);
 
         // Click event
-        cashPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
         cashPanel.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
-                dispose();
-                new PaymentCash(movieId, movieTitle, movieRating,
-                        seats, totalAmount, posterBytes);
+
+                int confirm = JOptionPane.showConfirmDialog(
+                        null,
+                        "Proceed with CASH payment?",
+                        "Confirm Payment",
+                        JOptionPane.YES_NO_OPTION
+                );
+
+                if (confirm == JOptionPane.YES_OPTION) {
+                    dispose();
+                    new PaymentCash(movieId, movieTitle, movieRating,
+                            seats, totalAmount, posterBytes);
+                }
 
             }
-
         });
 
         //cancel button diay di back lol
@@ -90,35 +98,6 @@ public class Transaction extends BaseFrame {
         mainPanel.add(cancelBtn);
 
         mainPanel.add(cashPanel);
-
-        // OR label
-        JLabel orLabel = new JLabel("OR");
-        orLabel.setFont(new Font("Arial", Font.BOLD, 25));
-        orLabel.setForeground(darkRed);
-        orLabel.setBounds(450, 250, 50, 40);
-        mainPanel.add(orLabel);
-
-        // PAY ONLINE Panel
-        JPanel onlinePanel = new JPanel();
-        onlinePanel.setLayout(new BorderLayout());
-        onlinePanel.setBounds(520, 180, 300, 200);
-        onlinePanel.setBackground(softWhite);
-        onlinePanel.setBorder(BorderFactory.createLineBorder(accentRed, 4));
-
-        JLabel onlineLabel = new JLabel("PAY ONLINE", SwingConstants.CENTER);
-        onlineLabel.setFont(new Font("Arial", Font.BOLD, 22));
-        onlineLabel.setForeground(accentRed);
-        onlinePanel.add(onlineLabel, BorderLayout.CENTER);
-
-        onlinePanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        onlinePanel.addMouseListener(new MouseAdapter() {
-            public void mouseClicked(MouseEvent e) {
-                dispose();
-                new PaymentOnline(); // create this class
-            }
-        });
-
-        mainPanel.add(onlinePanel);
 
         add(mainPanel);
     }
