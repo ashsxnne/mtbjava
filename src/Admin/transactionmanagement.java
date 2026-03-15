@@ -1,4 +1,3 @@
-
 package Admin;
 
 import KiosksPages.HomeK;
@@ -15,10 +14,8 @@ import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 
-
 public class transactionmanagement extends javax.swing.JFrame {
 
-    
     public transactionmanagement() {
         initComponents();
         styleButtons();
@@ -209,6 +206,14 @@ public class transactionmanagement extends javax.swing.JFrame {
         }
 
         int id = Integer.parseInt(transactiontable.getValueAt(row, 0).toString());
+        String paymentStatus = transactiontable.getValueAt(row, 3).toString().trim().toUpperCase();
+
+        // ❗ Check if payment is still pending
+        if (paymentStatus.equals("PENDING")) {
+            JOptionPane.showMessageDialog(this,
+                    "Transaction is still PENDING.\nCustomer must complete payment first.");
+            return;
+        }
 
         try (Connection con = DriverManager.getConnection("jdbc:sqlite:mtb.db")) {
 
@@ -604,7 +609,6 @@ public class transactionmanagement extends javax.swing.JFrame {
 
     }//GEN-LAST:event_jLabel10MouseClicked
 
-    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel archivetransaction;
