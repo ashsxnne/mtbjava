@@ -349,16 +349,19 @@ public class config {
 
     public boolean cancelBooking(int b_id, String reason) {
 
-        String insertSQL = "INSERT INTO tbl_canceled_booking "
-                + "(b_id, m_id, seat_no, booking_fee, poster, status, cancellation_reason, cancel_date) "
-                + "SELECT b_id, m_id, seat_no, booking_fee, poster, 'CANCELED', ?, datetime('now') "
-                + "FROM tbl_booking WHERE b_id = ?";
+        String getMovieSQL = "SELECT m_id FROM tbl_booking WHERE b_id=?";
 
-        String getBookingSQL = "SELECT m_id, seat_no FROM tbl_booking WHERE b_id = ?";
+        String getSeatsSQL = "SELECT seat_id, m_id, price FROM booking_seats WHERE b_id=?";
 
-        String updateMovieSQL = "UPDATE tbl_movies SET available_seats = available_seats + ? WHERE m_id = ?";
+        String insertCancelSQL = "INSERT INTO tbl_canceled_booking "
+                + "(b_id, m_id, seat_id, booking_fee, status, cancellation_reason, cancel_date) "
+                + "VALUES (?, ?, ?, ?, 'CANCELED', ?, datetime('now'))";
 
-        String deleteSQL = "DELETE FROM tbl_booking WHERE b_id = ?";
+        String updateSeatsSQL = "UPDATE tbl_movies SET available_seats = available_seats + ? WHERE m_id=?";
+
+        String deleteSeatsSQL = "DELETE FROM booking_seats WHERE b_id=?";
+
+        String deleteBookingSQL = "DELETE FROM tbl_booking WHERE b_id=?";
 
         try (Connection conn = connectDB()) {
 
@@ -367,40 +370,59 @@ public class config {
             int movieId = 0;
             int seatCount = 0;
 
-            // 1️⃣ Get movie id and seat count
-            try (PreparedStatement pst = conn.prepareStatement(getBookingSQL)) {
+            // 1️⃣ Get movie id
+            try (PreparedStatement pst = conn.prepareStatement(getMovieSQL)) {
                 pst.setInt(1, b_id);
                 ResultSet rs = pst.executeQuery();
-
                 if (rs.next()) {
-
                     movieId = rs.getInt("m_id");
-
-                    String seats = rs.getString("seat_no");
-                    if (seats != null && !seats.isEmpty()) {
-                        seatCount = seats.split(",").length;
-                    }
                 }
             }
 
-            // 2️⃣ Insert into canceled table
-            try (PreparedStatement pstInsert = conn.prepareStatement(insertSQL)) {
-                pstInsert.setString(1, reason);
-                pstInsert.setInt(2, b_id);
-                pstInsert.executeUpdate();
+            // 2️⃣ Get seats and insert cancelled records
+            try (PreparedStatement pstSeats = conn.prepareStatement(getSeatsSQL);
+                    PreparedStatement pstInsert = conn.prepareStatement(insertCancelSQL)) {
+
+                pstSeats.setInt(1, b_id);
+                ResultSet rs = pstSeats.executeQuery();
+
+                while (rs.next()) {
+
+                    int seatId = rs.getInt("seat_id");
+                    int price = rs.getInt("price");
+
+                    pstInsert.setInt(1, b_id);
+                    pstInsert.setInt(2, movieId);
+                    pstInsert.setInt(3, seatId);
+                    pstInsert.setInt(4, price);
+                    pstInsert.setString(5, reason);
+
+                    pstInsert.executeUpdate();
+
+                    seatCount++;
+                }
             }
 
-            // 3️⃣ Restore available_seats
-            try (PreparedStatement pstUpdate = conn.prepareStatement(updateMovieSQL)) {
+            // 3️⃣ Restore movie seats
+            try (PreparedStatement pstUpdate = conn.prepareStatement(updateSeatsSQL)) {
+
                 pstUpdate.setInt(1, seatCount);
                 pstUpdate.setInt(2, movieId);
                 pstUpdate.executeUpdate();
             }
 
-            // 4️⃣ Delete from booking
-            try (PreparedStatement pstDelete = conn.prepareStatement(deleteSQL)) {
-                pstDelete.setInt(1, b_id);
-                pstDelete.executeUpdate();
+            // 4️⃣ Delete seat records
+            try (PreparedStatement pstDeleteSeats = conn.prepareStatement(deleteSeatsSQL)) {
+
+                pstDeleteSeats.setInt(1, b_id);
+                pstDeleteSeats.executeUpdate();
+            }
+
+            // 5️⃣ Delete booking
+            try (PreparedStatement pstDeleteBooking = conn.prepareStatement(deleteBookingSQL)) {
+
+                pstDeleteBooking.setInt(1, b_id);
+                pstDeleteBooking.executeUpdate();
             }
 
             conn.commit();

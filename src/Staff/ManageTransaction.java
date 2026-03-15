@@ -127,8 +127,20 @@ public class ManageTransaction extends BaseFrame {
                 return false; // all cells non-editable
             }
         };
+        transactionTable.setRowSelectionAllowed(true);
+        transactionTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        transactionTable.setColumnSelectionAllowed(false);
+        transactionTable.setSelectionBackground(new Color(184, 207, 229));
+
         transactionTable.setFont(new Font("Segoe UI", Font.PLAIN, 18)); // data font
-        transactionTable.setRowHeight(30); // row height to fit font
+        transactionTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                int row = transactionTable.rowAtPoint(evt.getPoint());
+                if (row >= 0) {
+                    transactionTable.setRowSelectionInterval(row, row);
+                }
+            }
+        });
 
 // Put table inside scroll pane
         JScrollPane scrollPane = new JScrollPane(transactionTable);
@@ -182,16 +194,21 @@ public class ManageTransaction extends BaseFrame {
         add(toggleBtn);
 
         toggleBtn.addActionListener(e -> {
-            int selectedRow = transactionTable.getSelectedRow();
-            if (selectedRow >= 0) {
-                int t_id = Integer.parseInt(transactionTable.getValueAt(selectedRow, 0).toString());
-                String currentStatus = transactionTable.getValueAt(selectedRow, 5).toString();
-                String newStatus = currentStatus.equalsIgnoreCase("PAID") ? "PENDING" : "PAID";
-                updatePaymentStatus(t_id, newStatus);
-                loadTransactions(searchField.getText().trim());
-            } else {
+
+            int row = transactionTable.getSelectionModel().getLeadSelectionIndex();
+
+            if (row < 0) {
                 JOptionPane.showMessageDialog(this, "Please select a transaction.");
+                return;
             }
+
+            int t_id = Integer.parseInt(transactionTable.getValueAt(row, 0).toString());
+            String currentStatus = transactionTable.getValueAt(row, 5).toString();
+
+            String newStatus = currentStatus.equalsIgnoreCase("PAID") ? "PENDING" : "PAID";
+
+            updatePaymentStatus(t_id, newStatus);
+            loadTransactions(searchField.getText().trim());
         });
 
 // ================= MARK AS COMPLETED =================
@@ -209,18 +226,22 @@ public class ManageTransaction extends BaseFrame {
         add(completeBtn);
 
         completeBtn.addActionListener(e -> {
-            int selectedRow = transactionTable.getSelectedRow();
-            if (selectedRow >= 0) {
-                int t_id = Integer.parseInt(transactionTable.getValueAt(selectedRow, 0).toString());
-                String paymentStatus = transactionTable.getValueAt(selectedRow, 5).toString();
-                if (paymentStatus.equalsIgnoreCase("PAID")) {
-                    archiveTransaction(t_id);
-                    loadTransactions(searchField.getText().trim());
-                } else {
-                    JOptionPane.showMessageDialog(this, "Only PAID transactions can be completed.");
-                }
-            } else {
+
+            int row = transactionTable.getSelectionModel().getLeadSelectionIndex();
+
+            if (row < 0) {
                 JOptionPane.showMessageDialog(this, "Please select a transaction.");
+                return;
+            }
+
+            int t_id = Integer.parseInt(transactionTable.getValueAt(row, 0).toString());
+            String paymentStatus = transactionTable.getValueAt(row, 5).toString();
+
+            if (paymentStatus.equalsIgnoreCase("PAID")) {
+                archiveTransaction(t_id);
+                loadTransactions(searchField.getText().trim());
+            } else {
+                JOptionPane.showMessageDialog(this, "Only PAID transactions can be completed.");
             }
         });
 
@@ -266,7 +287,12 @@ public class ManageTransaction extends BaseFrame {
             }
 
             try (ResultSet rs = pst.executeQuery()) {
+
                 transactionTable.setModel(DbUtils.resultSetToTableModel(rs));
+
+                transactionTable.setRowSelectionAllowed(true);
+                transactionTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+                transactionTable.setColumnSelectionAllowed(false);
             }
 
         } catch (Exception e) {

@@ -103,13 +103,13 @@ public class PaymentCash extends BaseFrame {
 
         payBtn.addActionListener(e -> {
             payBtn.setEnabled(false);
-            processPayment();
+            processPayment(payBtn);
         });
 
         add(payBtn);
     }
 
-    private void processPayment() {
+    private void processPayment(JButton payBtn) {
 
         try {
 
@@ -117,6 +117,7 @@ public class PaymentCash extends BaseFrame {
 
             if (cash < totalAmount) {
                 JOptionPane.showMessageDialog(this, "Insufficient Cash!");
+                payBtn.setEnabled(true); // enable again
                 return;
             }
 
@@ -200,6 +201,7 @@ public class PaymentCash extends BaseFrame {
 
         } catch (NumberFormatException ex) {
             JOptionPane.showMessageDialog(this, "Please enter valid cash amount.");
+            payBtn.setEnabled(true);
         } catch (Exception ex) {
             ex.printStackTrace();
             JOptionPane.showMessageDialog(this, "Database Error!");
